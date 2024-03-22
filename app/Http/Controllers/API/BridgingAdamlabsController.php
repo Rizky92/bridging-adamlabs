@@ -18,42 +18,9 @@ use Illuminate\Http\Request;
 
 class BridgingAdamlabsController extends Controller
 {
-    public function __invoke(Request $request)
+    public function store(StoreBridgingRequest $request)
     {
-        if ($request->header('x-api-key') !== env('API_KEY')) {
-            return response()->json([
-                'status' => false,
-                'code' => 401,
-                'message' => 'Unauthorized',
-            ], 401);
-        }
-
-        $data = $request->validate([
-            'no_registrasi'                             => 'required',
-            'no_laboratorium'                           => 'required',
-            'waktu_registrasi'                          => 'required|date',
-            'diagnosa_awal'                             => 'required',
-            'kode_RS'                                   => 'required',
-            'kode_lab'                                  => 'required',
-            'umur.tahun'                                => 'required|integer',
-            'umur.bulan'                                => 'required|integer',
-            'umur.hari'                                 => 'required|integer',
-            'pasien'                                    => 'required|array',
-            'dokter_pengirim'                           => 'required|array',
-            'unit_asal'                                 => 'required|array',
-            'penjamin'                                  => 'required|array',
-            'pemeriksaan'                               => 'required|array',
-            'pemeriksaan.*.nomor_urut'                  => 'required|integer',
-            'pemeriksaan.*.kode_tindakan_simrs'         => 'required',
-            'pemeriksaan.*.kode_pemeriksaan_lis'        => 'required',
-            'pemeriksaan.*.nama_pemeriksaan_lis'        => 'required',
-            'pemeriksaan.*.metode'                      => 'required',
-            'pemeriksaan.*.waktu_pemeriksaan'           => 'required|date',
-            'pemeriksaan.*.status_bridging'             => 'boolean',
-            'pemeriksaan.*.kategori_pemeriksaan'        => 'required|array',
-            'pemeriksaan.*.sub_kategori_pemeriksaan'    => 'required|array',
-            'pemeriksaan.*.hasil'                       => 'required|array',
-        ]);
+        $data = $request->validated();
 
         DB::beginTransaction();
 
@@ -63,7 +30,8 @@ class BridgingAdamlabsController extends Controller
             $penjamin           = Penjamin::firstOrCreate($data['penjamin']);
             $pasien             = Pasien::firstOrCreate($data['pasien']);
 
-            $registrasi = Registrasi::create([
+            $registrasi = new Registrasi([
+                'pasien_id'             => $pasien->id,
                 'no_registrasi'         => $data['no_registrasi'],
                 'no_laboratorium'       => $data['no_laboratorium'],
                 'waktu_registrasi'      => $data['waktu_registrasi'],
@@ -73,30 +41,33 @@ class BridgingAdamlabsController extends Controller
                 'umur_tahun'            => $data['umur']['tahun'],
                 'umur_bulan'            => $data['umur']['bulan'],
                 'umur_hari'             => $data['umur']['hari'],
-                'pasien_id'             => $pasien->id,
-                'dokter_pengirim_id'    => $dokter_pengirim->id,
-                'unit_asal_id'          => $unit_asal->id,
-                'penjamin_id'           => $penjamin->id,
             ]);
+            
+            $registrasi->dokterPengirim()->associate($dokter_pengirim);
+            $registrasi->unitAsal()->associate($unit_asal);
+            $registrasi->penjamin()->associate($penjamin);
+            $registrasi->save();
 
             foreach ($data['pemeriksaan'] as $pemeriksaanData) {
                 $kategori_pemeriksaan       = KategoriPemeriksaan::firstOrCreate($pemeriksaanData['kategori_pemeriksaan']);
                 $sub_kategori_pemeriksaan   = SubKategoriPemeriksaan::firstOrCreate($pemeriksaanData['sub_kategori_pemeriksaan']);
                 $hasil                      = Hasil::create($pemeriksaanData['hasil']);
 
-                Pemeriksaan::create([
-                    'nomor_urut' => $pemeriksaanData['nomor_urut'],
-                    'kode_tindakan_simrs'           => $pemeriksaanData['kode_tindakan_simrs'],
-                    'kode_pemeriksaan_lis'          => $pemeriksaanData['kode_pemeriksaan_lis'],
-                    'nama_pemeriksaan_lis'          => $pemeriksaanData['nama_pemeriksaan_lis'],
-                    'metode'                        => $pemeriksaanData['metode'],
-                    'waktu_pemeriksaan'             => $pemeriksaanData['waktu_pemeriksaan'],
-                    'status_bridging'               => isset($pemeriksaanData['status_bridging']) ? $pemeriksaanData['status_bridging'] : false, 
-                    'kategori_pemeriksaan_id'       => $kategori_pemeriksaan->id,
-                    'sub_kategori_pemeriksaan_id'   => $sub_kategori_pemeriksaan->id,
-                    'hasil_id'                      => $hasil->id,
-                    'registrasi_id'                 => $registrasi->id,
+                $pemeriksaan = new Pemeriksaan([
+                    'nomor_urut'                => $pemeriksaanData['nomor_urut'],
+                    'kode_tindakan_simrs'       => $pemeriksaanData['kode_tindakan_simrs'],
+                    'kode_pemeriksaan_lis'      => $pemeriksaanData['kode_pemeriksaan_lis'],
+                    'nama_pemeriksaan_lis'      => $pemeriksaanData['nama_pemeriksaan_lis'],
+                    'metode'                    => $pemeriksaanData['metode'],
+                    'waktu_pemeriksaan'         => $pemeriksaanData['waktu_pemeriksaan'],
+                    'status_bridging'           => isset($pemeriksaanData['status_bridging']) ? $pemeriksaanData['status_bridging'] : false, 
                 ]);
+
+                $pemeriksaan->kategoriPemeriksaan()->associate($kategori_pemeriksaan);
+                $pemeriksaan->subKategoriPemeriksaan()->associate($sub_kategori_pemeriksaan);
+                $pemeriksaan->hasil()->associate($hasil);
+                $pemeriksaan->registrasi()->associate($registrasi);
+                $pemeriksaan->save();
             }
             DB::commit();
 
