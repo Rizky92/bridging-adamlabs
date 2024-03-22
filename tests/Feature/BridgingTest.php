@@ -15,9 +15,7 @@ class BridgingTest extends TestCase
      */
     public function testStoreBridging()
     {
-        $response = $this->withHeaders([
-            'x-api-key' => env('API_KEY'),
-        ])->postJson('/api/adam-lis/bridging', [
+        $data = [
             "no_registrasi" => "89",
             "no_laboratorium" => "202212270001",
             "waktu_registrasi" => "2022-12-27 11:02:33",
@@ -100,8 +98,82 @@ class BridgingTest extends TestCase
                     ]
                 ]
             ]
-        ]);
+        ];
+
+        $response = $this->withHeaders([
+            'x-api-key' => config('api.key'),
+        ])->json('POST', '/api/adam-lis/bridging', $data);
 
         $response->assertStatus(200);
+        $response->assertJson([
+            'status' => true,
+            'code' => 200,
+            'message' => 'Data berhasil disimpan',
+        ]);
+    }
+
+    public function testUpdateHasil()
+    {
+        $data = [
+            "no_registrasi" => "89",
+            "no_laboratorium" => "202212270001",
+            "kode_RS" => "RS02",
+            "kode_lab" => "LAB_PK",
+            "pasien" => [
+                "nama_pasien" => "testing",
+                "no_rm" => "343434",
+                "jenis_kelamin" => "L",
+                "tanggal_lahir" => "1994-01-20",
+                "nik" => "324008887878978978",
+                "ras" => "Hitam/Putih",
+                "berat_badan" => "45kg",
+                "jenis_registrasi" => "Reguler / Cito"
+            ],
+            "pemeriksaan" => [
+                [
+                    "kategori_pemeriksaan" => [
+                        "nama_kategori" => "HEMATOLOGI",
+                    ],
+                    "sub_kategori_pemeriksaan" => [
+                        "nama_sub_kategori" => "Darah Rutin",
+                    ],
+                    "nomor_urut" => 2,
+                    "kode_tindakan_simrs" => "HGB",
+                    "kode_pemeriksaan_lis" => "HGB",
+                    "nama_pemeriksaan_lis" => "Hemaglobin",
+                    "hasil" => [
+                        "nilai_hasil" => "56",
+                        "flag_kode" => "N"
+                    ]
+                ],
+                [
+                    "kategori_pemeriksaan" => [
+                        "nama_kategori" => "IMUNO-SEROLOGI",
+                    ],
+                    "sub_kategori_pemeriksaan" => [
+                        "nama_sub_kategori" => "Infeski Lain",
+                    ],
+                    "nomor_urut" => 1,
+                    "kode_tindakan_simrs" => "GOLDAR_IMUNO",
+                    "kode_pemeriksaan_lis" => "GOLDAR_IMUNO ",
+                    "nama_pemeriksaan_lis" => "Golongan darah",
+                    "hasil" => [
+                        "nilai_hasil" => "56",
+                        "flag_kode" => "N"
+                    ]
+                ]
+            ]
+        ];
+
+        $response = $this->withHeaders([
+            'x-api-key' => config('api.key'),
+        ])->json('POST', '/api/adam-lis/bridging/update-hasil', $data);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'status' => true,
+            'code' => 200,
+            'message' => 'Data berhasil diupdate',
+        ]);
     }
 }

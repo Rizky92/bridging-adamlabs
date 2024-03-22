@@ -15,4 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/adam-lis/bridging', [BridgingAdamlabsController::class, 'store'])->middleware('api.key');
+Route::group(['middleware' => 'api.key'], function () {
+    Route::post('/adam-lis/bridging', [BridgingAdamlabsController::class, 'store']);
+    Route::post('/adam-lis/bridging/update-hasil', [BridgingAdamlabsController::class, 'updateHasil']);
+});
