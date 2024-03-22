@@ -15,4 +15,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/adam-lis/bridging', BridgingAdamlabsController::class);
+Route::post('/adam-lis/bridging', [BridgingAdamlabsController::class, 'store'])->middleware('api.key');
