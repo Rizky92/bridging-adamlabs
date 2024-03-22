@@ -16,7 +16,7 @@ class CheckApiKey
      */
     public function handle(Request $request, Closure $next)
     {
-        if ($request->header('x-api-key') !== env('API_KEY')) {
+        if ($request->header('x-api-key') !== config('api.key')) {
             return response()->json([
                 'status' => false,
                 'code' => 401,
