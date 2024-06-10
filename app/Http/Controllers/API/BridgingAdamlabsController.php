@@ -15,7 +15,6 @@ use App\Models\Bridging\Registrasi;
 use App\Models\Bridging\SubKategoriPemeriksaan;
 use App\Models\Bridging\UnitAsal;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
 
 class BridgingAdamlabsController extends Controller
 {
