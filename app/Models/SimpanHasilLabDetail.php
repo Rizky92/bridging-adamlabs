@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class SimpanHasilLabDetail extends Model
 {
@@ -41,5 +42,10 @@ class SimpanHasilLabDetail extends Model
     public function master(): BelongsTo
     {
         return $this->belongsTo(SimpanHasilLab::class, 'no_laboratorium', 'no_laboratorium');
+    }
+
+    public function tindakan(): HasOne
+    {
+        return $this->hasOne(TindakanLab::class, 'kd_jenis_prw', 'kode_tindakan_simrs');
     }
 }

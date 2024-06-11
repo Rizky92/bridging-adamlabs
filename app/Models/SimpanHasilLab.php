@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SimpanHasilLab extends Model
@@ -50,5 +51,10 @@ class SimpanHasilLab extends Model
     public function detail(): HasMany
     {
         return $this->hasMany(SimpanHasilLabDetail::class, 'no_laboratorium', 'no_laboratorium');
+    }
+
+    public function permintaanLabSIMRS(): BelongsTo
+    {
+        return $this->belongsTo(PermintaanLabPK::class, 'noorder', 'no_registrasi');
     }
 }

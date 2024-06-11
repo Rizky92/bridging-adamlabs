@@ -8,13 +8,13 @@ class TindakanLab extends Model
 {
     protected $connection = 'mysql_sik';
 
-    protected $table = 'jns_perawatan_lab';
+    protected $table = 'mapping_adamlabs';
 
-    protected $primaryKey = 'kd_jenis_prw';
+    protected $primaryKey = 'id';
 
-    protected $keyType = 'string';
+    protected $keyType = 'int';
 
-    public $incrementing = false;
+    public $incrementing = true;
 
     public $timestamps = false;
 }
