@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\API\BridgingAdamlabsController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\API\SimpanHasilLabController;
+use App\Http\Controllers\API\UpdateHasilLabController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,6 +16,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['middleware' => 'api.key'], function () {
-    Route::post('/adam-lis/bridging', [BridgingAdamlabsController::class, 'store']);
-    Route::post('/adam-lis/bridging/update-hasil', [BridgingAdamlabsController::class, 'updateHasil']);
+    Route::post('/adam-lis/bridging', SimpanHasilLabController::class);
+    Route::post('/adam-lis/bridging/update-hasil', UpdateHasilLabController::class);
 });
