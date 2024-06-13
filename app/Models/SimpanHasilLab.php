@@ -8,9 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SimpanHasilLab extends Model
 {
-    protected $connection = 'mysql_bridging';
-    
-    protected $table = 'hasil_pemeriksaan_lab';
+    protected $table = 'adamlabs_registrasi';
 
     protected $primaryKey = 'no_laboratorium';
 
@@ -30,22 +28,22 @@ class SimpanHasilLab extends Model
         'umur_tahun',
         'umur_bulan',
         'umur_hari',
-        'nama_pasien',
-        'no_rm',
-        'jenis_kelamin',
-        'alamat',
-        'no_telphone',
-        'tanggal_lahir',
-        'nik',
-        'ras',
-        'berat_badan',
-        'jenis_registrasi',
-        'kode_dokter_pengirim',
-        'nama_dokter_pengirim',
-        'kode_unit_asal',
-        'nama_unit_asal',
-        'kode_penjamin',
-        'nama_penjamin',
+        'pasien_no_rm',
+        'pasien_nama_pasien',
+        'pasien_jenis_kelamin',
+        'pasien_tanggal_lahir',
+        'pasien_alamat',
+        'pasien_nik',
+        'pasien_no_telphone',
+        'pasien_ras',
+        'pasien_berat_badan',
+        'pasien_jenis_registrasi',
+        'dokter_pengirim_kode',
+        'dokter_pengirim_nama',
+        'unit_asal_kode',
+        'unit_asal_nama',
+        'penjamin_kode',
+        'penjamin_nama',
     ];
 
     public function detail(): HasMany

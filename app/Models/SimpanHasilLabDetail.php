@@ -8,9 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class SimpanHasilLabDetail extends Model
 {
-    protected $connection = 'mysql_bridging';
-    
-    protected $table = 'hasil_pemeriksaan_lab_detail';
+    protected $table = 'adamlabs_hasil_pemeriksaan';
 
     protected $primaryKey = 'id';
 
@@ -21,12 +19,13 @@ class SimpanHasilLabDetail extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'no_laboratorium',
         'no_registrasi',
-        'nama_kategori_pemeriksaan',
-        'urut_kategori_pemeriksaan',
-        'nama_subkategori_pemeriksaan',
-        'urut_subkategori_pemeriksaan',
-        'urut',
+        'kategori_pemeriksaan_nama',
+        'kategori_pemeriksaan_urut',
+        'subkategori_pemeriksaan_nama',
+        'subkategori_pemeriksaan_urut',
+        'nomor_urut',
         'kode_tindakan_simrs',
         'kode_pemeriksaan_lis',
         'nama_pemeriksaan_lis',
@@ -34,8 +33,8 @@ class SimpanHasilLabDetail extends Model
         'waktu_pemeriksaan',
         'status_bridging',
         'hasil_satuan',
-        'hasil_nilai_hasil',
-        'hasil_nilai_rujukan',
+        'nilai_hasil',
+        'nilai_rujukan',
         'flag_kode',
     ];
 
