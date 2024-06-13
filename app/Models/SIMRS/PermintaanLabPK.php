@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\SIMRS;
 
 use Illuminate\Database\Eloquent\Model;
 use Reedware\LaravelCompositeRelations\CompositeHasMany;
@@ -22,10 +22,6 @@ class PermintaanLabPK extends Model
 
     public $timestamps = false;
 
-    /**
-     * @psalm-suppress InvalidReturnType
-     * @psalm-suppress InvalidReturnStatement
-     */
     public function hasil(): CompositeHasMany
     {
         return $this
@@ -34,6 +30,6 @@ class PermintaanLabPK extends Model
                 ['no_rawat', 'tgl_periksa', 'jam'],
                 ['no_rawat', 'tgl_hasil', 'jam_hasil'],
             )
-            ->where('status', 'PK');
+            ->where('kategori', 'PK');
     }
 }

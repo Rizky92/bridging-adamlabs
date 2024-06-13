@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\SIMRS;
 
 use Illuminate\Database\Eloquent\Model;
 use Reedware\LaravelCompositeRelations\CompositeBelongsTo;
@@ -12,21 +12,37 @@ class HasilPeriksaLab extends Model
 
     protected $connection = 'mysql_sik';
 
+    protected $table = 'periksa_lab';
+
     protected $primaryKey = false;
 
     protected $keyType = false;
-
-    protected $table = 'periksa_lab';
 
     public $incrementing = false;
 
     public $timestamps = false;
 
-    /**
-     * @psalm-suppress InvalidReturnType
-     * @psalm-suppress InvalidReturnStatement
-     */
-    public function permintaanLabPK(): CompositeBelongsTo
+    protected $fillable = [
+        'no_rawat',
+        'nip',
+        'kd_jenis_prw',
+        'tgl_periksa',
+        'jam',
+        'dokter_perujuk',
+        'bagian_rs',
+        'bhp',
+        'tarif_perujuk',
+        'tarif_tindakan_dokter',
+        'tarif_tindakan_petugas',
+        'kso',
+        'menejemen',
+        'biaya',
+        'kd_dokter',
+        'status',
+        'kategori',
+    ];
+
+    public function permintaan(): CompositeBelongsTo
     {
         return $this
             ->compositeBelongsTo(

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5f8d53e7933aa4cffb21332c4b9dce72",
+    "content-hash": "c2241e65b097ba8130a5146b39f9ee2e",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -2996,6 +2996,46 @@
                 "source": "https://github.com/tylernathanreed/laravel-composite-relations/tree/v3.0.1"
             },
             "time": "2023-04-28T03:39:16+00:00"
+        },
+        {
+            "name": "rizky92/carbon-helper",
+            "version": "0.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Rizky92/carbon-helper.git",
+                "reference": "9a9da45b5e56f6946e80e174139b1dc5e91eccea"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Rizky92/carbon-helper/zipball/9a9da45b5e56f6946e80e174139b1dc5e91eccea",
+                "reference": "9a9da45b5e56f6946e80e174139b1dc5e91eccea",
+                "shasum": ""
+            },
+            "require": {
+                "nesbot/carbon": "^2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rizky92",
+                    "email": "myquinn489@gmail.com"
+                }
+            ],
+            "description": "Helper for nesbot/carbon",
+            "support": {
+                "issues": "https://github.com/Rizky92/carbon-helper/issues",
+                "source": "https://github.com/Rizky92/carbon-helper/tree/0.0.4"
+            },
+            "time": "2024-01-21T14:13:59+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",

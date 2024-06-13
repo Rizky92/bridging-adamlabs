@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class SimpanHasilLab extends Model
+class Registrasi extends Model
 {
+    protected $connection = 'mysql';
+
     protected $table = 'adamlabs_registrasi';
 
     protected $primaryKey = 'no_laboratorium';
@@ -19,8 +20,8 @@ class SimpanHasilLab extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'no_registrasi',
         'no_laboratorium',
+        'no_registrasi',
         'waktu_registrasi',
         'diagnosa_awal',
         'kode_rs',
@@ -44,15 +45,11 @@ class SimpanHasilLab extends Model
         'unit_asal_nama',
         'penjamin_kode',
         'penjamin_nama',
+        'pegawai',
     ];
 
-    public function detail(): HasMany
+    public function pemeriksaan(): HasMany
     {
-        return $this->hasMany(SimpanHasilLabDetail::class, 'no_laboratorium', 'no_laboratorium');
-    }
-
-    public function permintaanLabSIMRS(): BelongsTo
-    {
-        return $this->belongsTo(PermintaanLabPK::class, 'noorder', 'no_registrasi');
+        return $this->hasMany(Pemeriksaan::class, 'no_laboratorium', 'no_laboratorium');
     }
 }
