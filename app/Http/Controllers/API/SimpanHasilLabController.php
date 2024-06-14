@@ -51,11 +51,11 @@ class SimpanHasilLabController
                 'metode'               => $metode,
                 'waktu_pemeriksaan'    => $waktuPemeriksaan,
                 'status_bridging'      => $statusBridging,
+                'nomor_urut'           => $urut,
                 'kategori_pemeriksaan' => [
                     'nama_kategori' => $namaKategori,
                     'nomor_urut'    => $urutKategori,
                 ],
-                'nomor_urut'               => $urut,
                 'sub_kategori_pemeriksaan' => [
                     'nama_sub_kategori' => $namaSubKategori,
                     'nomor_urut'        => $urutSubKategori,
