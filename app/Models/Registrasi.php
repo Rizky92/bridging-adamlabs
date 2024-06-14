@@ -9,7 +9,7 @@ class Registrasi extends Model
 {
     protected $connection = 'mysql';
 
-    protected $table = 'adamlabs_registrasi';
+    protected $table = 'registrasi';
 
     protected $primaryKey = 'no_laboratorium';
 

@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\SimpanHasilLabRequest;
-use App\Models\SimpanHasilLab;
-use App\Models\SimpanHasilLabDetail;
+use App\Jobs\SimpanHasilLabKeSIMRS;
+use App\Models\Pemeriksaan;
+use App\Models\Registrasi;
 use Exception;
 use Illuminate\Http\JsonResponse;
 
@@ -15,7 +16,7 @@ class SimpanHasilLabController
         try {
             $data = $request->validated();
 
-            SimpanHasilLab::create([
+            Registrasi::create([
                 'no_registrasi'           => $data['no_registrasi'],
                 'no_laboratorium'         => $data['no_laboratorium'],
                 'waktu_registrasi'        => $data['waktu_registrasi'],
@@ -65,7 +66,7 @@ class SimpanHasilLabController
                     'flag_kode'     => $flagKode,
                 ]
             ]) {
-                SimpanHasilLabDetail::create([
+                Pemeriksaan::create([
                     'no_laboratorium'               => $data['no_laboratorium'],
                     'no_registrasi'                 => $data['no_registrasi'],
                     'kategori_pemeriksaan_nama'     => $namaKategori,
@@ -80,11 +81,16 @@ class SimpanHasilLabController
                     'waktu_pemeriksaan'             => $waktuPemeriksaan,
                     'status_bridging'               => false,
                     'hasil_satuan'                  => $satuan,
-                    'nilai_hasil'                   => $nilaiHasil,
-                    'nilai_rujukan'                 => $nilaiRujukan,
-                    'flag_kode'                     => $flagKode,
+                    'hasil_nilai_hasil'             => $nilaiHasil,
+                    'hasil_nilai_rujukan'           => $nilaiRujukan,
+                    'hasil_flag_kode'               => $flagKode,
                 ]);
             }
+
+            SimpanHasilLabKeSIMRS::dispatch([
+                'no_laboratorium' => $data['no_laboratorium'],
+                'no_registrasi' => $data['no_registrasi'],
+            ]);
 
             return response()->json([
                 'status' => true,

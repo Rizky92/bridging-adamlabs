@@ -4,16 +4,17 @@ namespace App\Jobs;
 
 use App\Models\Pemeriksaan;
 use App\Models\Registrasi;
-use App\Models\SimpanHasilLab;
 use App\Models\SIMRS\HasilPeriksaLab;
+use App\Models\SIMRS\HasilPeriksaLabDetail;
 use App\Models\SIMRS\PermintaanLabPK;
 use App\Models\SIMRS\TindakanLab;
+use App\Models\SIMRS\TindakanLabTemplate;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
 
 class SimpanHasilLabKeSIMRS implements ShouldQueue
 {
@@ -23,6 +24,8 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
 
     private $noOrderLabSIMRS;
 
+    private $noRawat;
+
     private $tglHasil;
 
     private $jam;
@@ -30,7 +33,10 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
     /**
      * Create a new job instance.
      * 
-     * @param  array{no_laboratorium: string, no_registrasi: string}  $options
+     * @param  array{
+     *     no_laboratorium: string,
+     *     no_registrasi: string
+     * }  $options
      */
     public function __construct(array $options)
     {
@@ -43,87 +49,81 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
      */
     public function handle()
     {
-        //
+        $this->simpanHasilLab();
     }
 
     private function simpanHasilLab(): void
     {
-        // registrasi pemeriksaan
+        $permintaanLab = PermintaanLabPK::query()
+            ->where('noorder', $this->noOrderLabSIMRS)
+            ->first();
+
         $hasilPemeriksaanLab = Registrasi::query()
             ->with('pemeriksaan')
             ->where('no_laboratorium', $this->noLaboratoriumLIS)
             ->where('no_registrasi', $this->noOrderLabSIMRS)
             ->first();
 
-        $hasilLab = Pemeriksaan::query()
-            ->with('registrasi', 'mappingTindakan.tindakan')
-            ->where('no_laboratorium', $this->noLaboratoriumLIS)
-            ->groupBy('id')
-            ->get();
+        $dataTindakan = $hasilPemeriksaanLab->pemeriksaan->pluck('kode_tindakan_simrs');
 
-        // tindakan
-        $tindakan = $hasilLab->pluck('kode_tindakan_simrs');
-
-        // waktu pemeriksaan, gunakan waktu pemeriksaan pertama
-        $waktuPeriksa = carbon($hasilLab
-            ->first(['waktu_pemeriksaan'])
-            ->waktu_pemeriksaan);
+        $waktuPeriksa = carbon($hasilPemeriksaanLab->first()->pemeriksaan->first()->waktu_pemeriksaan);
 
         $this->tglHasil = $waktuPeriksa->toDateString();
 
         $this->jam = $waktuPeriksa->format('H:i:s');
 
-        $permintaanLab = PermintaanLabPK::query()
-            ->where('noorder', $this->noOrderLabSIMRS)
-            ->first();
+        $expertise = DB::connection('mysql_sik')
+            ->table('set_pjlab')
+            ->value('kd_dokterlab');
 
-        $periksaLab = [];
+        $statusUmur = ($hasilPemeriksaanLab->umur_tahun >= 18) ? 'Dewasa' : 'Anak-anak';
 
-        TindakanLab::query()
-            ->with('template')
-            ->whereIn('kd_jenis_prw', $tindakan)
-            ->get()
-            ->each(function (TindakanLab $tindakan) use ($permintaanLab, &$periksaLab) {
-                $hasilPeriksaLab = HasilPeriksaLab::create([
-                    'no_rawat'               => $permintaanLab->no_rawat,
-                    'nip'                    => '-',
-                    'kd_jenis_prw'           => $tindakan->kd_jenis_prw,
-                    'tgl_periksa'            => $this->tglHasil,
-                    'jam'                    => $this->jam,
-                    'dokter_perujuk'         => ,
-                    'bagian_rs'              => ,
-                    'bhp'                    => ,
-                    'tarif_perujuk'          => ,
-                    'tarif_tindakan_dokter'  => ,
-                    'tarif_tindakan_petugas' => ,
-                    'kso'                    => ,
-                    'menejemen'              => ,
-                    'biaya'                  => ,
-                    'kd_dokter'              => ,
-                    'status'                 => ,
-                    'kategori'               => ,
-                ]);
+        DB::connection('mysql_sik')
+            ->transaction(function () use (
+                $dataTindakan, $permintaanLab, $hasilPemeriksaanLab, $expertise, $statusUmur
+            ) {
+                PermintaanLabPK::query()
+                    ->where('noorder', $this->noOrderLabSIMRS)
+                    ->update([
+                        'tgl_hasil' => $this->tglHasil,
+                        'jam_hasil' => $this->jam,
+                    ]);
+
+                TindakanLab::query()
+                    ->whereIn('kd_jenis_prw', $dataTindakan)
+                    ->get()
+                    ->each(function (TindakanLab $tindakan) use ($permintaanLab, $hasilPemeriksaanLab, $expertise, $statusUmur) {
+                        HasilPeriksaLab::create([
+                            'no_rawat'               => $permintaanLab->no_rawat,
+                            'nip'                    => '-',
+                            'kd_jenis_prw'           => $tindakan->kd_jenis_prw,
+                            'tgl_periksa'            => $this->tglHasil,
+                            'jam'                    => $this->jam,
+                            'dokter_perujuk'         => $permintaanLab->dokter_perujuk,
+                            'bagian_rs'              => $tindakan->bagian_rs,
+                            'bhp'                    => $tindakan->bhp,
+                            'tarif_perujuk'          => $tindakan->tarif_perujuk,
+                            'tarif_tindakan_dokter'  => $tindakan->tarif_tindakan_dokter,
+                            'tarif_tindakan_petugas' => $tindakan->tarif_tindakan_petugas,
+                            'kso'                    => $tindakan->kso,
+                            'menejemen'              => $tindakan->menejemen,
+                            'biaya'                  => $tindakan->total_byr,
+                            'kd_dokter'              => $expertise,
+                            'status'                 => $permintaanLab->status,
+                            'kategori'               => $tindakan->kategori,
+                        ]);
+
+                        Pemeriksaan::isiHasilPeriksaLabDetail(
+                            $hasilPemeriksaanLab->no_laboratorium,
+                            $tindakan->kd_jenis_prw,
+                            $permintaanLab->no_rawat,
+                            $this->tglHasil,
+                            $this->jam,
+                            $hasilPemeriksaanLab->pasien_jenis_kelamin,
+                            $statusUmur
+                        );
+                    });
             });
-
-        // $periksaLab[] = [
-        //     'no_rawat',
-        //     'nip',
-        //     'kd_jenis_prw',
-        //     'tgl_periksa',
-        //     'jam',
-        //     'dokter_perujuk',
-        //     'bagian_rs',
-        //     'bhp',
-        //     'tarif_perujuk',
-        //     'tarif_tindakan_dokter',
-        //     'tarif_tindakan_petugas',
-        //     'kso',
-        //     'menejemen',
-        //     'biaya',
-        //     'kd_dokter',
-        //     'status',
-        //     'kategori',
-        // ];
     }
 
     private function updatePermintaan(): void
