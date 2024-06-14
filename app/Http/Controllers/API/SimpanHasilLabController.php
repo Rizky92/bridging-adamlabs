@@ -45,12 +45,13 @@ class SimpanHasilLabController
             ]);
 
             foreach ($data['pemeriksaan'] as [
-                'kode_tindakan_simrs'      => $kodeSIMRS,
-                'kode_pemeriksaan_lis'     => $kodeLIS,
-                'nama_pemeriksaan_lis'     => $namaLIS,
-                'metode'                   => $metode,
-                'waktu_pemeriksaan'        => $waktuPemeriksaan,
-                'kategori_pemeriksaan'     => [
+                'kode_tindakan_simrs'  => $kodeSIMRS,
+                'kode_pemeriksaan_lis' => $kodeLIS,
+                'nama_pemeriksaan_lis' => $namaLIS,
+                'metode'               => $metode,
+                'waktu_pemeriksaan'    => $waktuPemeriksaan,
+                'status_bridging'      => $statusBridging,
+                'kategori_pemeriksaan' => [
                     'nama_kategori' => $namaKategori,
                     'nomor_urut'    => $urutKategori,
                 ],
@@ -59,7 +60,7 @@ class SimpanHasilLabController
                     'nama_sub_kategori' => $namaSubKategori,
                     'nomor_urut'        => $urutSubKategori,
                 ],
-                'hasil'                    => [
+                'hasil' => [
                     'satuan'        => $satuan,
                     'nilai_hasil'   => $nilaiHasil,
                     'nilai_rujukan' => $nilaiRujukan,
@@ -79,7 +80,7 @@ class SimpanHasilLabController
                     'nama_pemeriksaan_lis'          => $namaLIS,
                     'metode'                        => $metode,
                     'waktu_pemeriksaan'             => $waktuPemeriksaan,
-                    'status_bridging'               => false,
+                    'status_bridging'               => $statusBridging,
                     'hasil_satuan'                  => $satuan,
                     'hasil_nilai_hasil'             => $nilaiHasil,
                     'hasil_nilai_rujukan'           => $nilaiRujukan,

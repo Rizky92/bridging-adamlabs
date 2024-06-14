@@ -94,7 +94,7 @@ class Pemeriksaan extends Model
             ? as jam,
             mapping_adamlabs.id_template,
             pemeriksaan.hasil_nilai_hasil as nilai,
-            pemeriksaan.hasil_nilai_rujukan,
+            pemeriksaan.hasil_nilai_rujukan as nilai_rujukan,
             pemeriksaan.hasil_flag_kode as keterangan,
             template_laboratorium.bagian_rs,
             template_laboratorium.bhp,

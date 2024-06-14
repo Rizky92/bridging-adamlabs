@@ -9,7 +9,7 @@ class MappingTindakan extends Model
 {
     protected $connection = 'mysql_sik';
 
-    protected $table = 'mapping_adamlabs';
+    protected $table = 'adamlabs_mapping_tindakan';
 
     protected $primaryKey = 'id';
 
