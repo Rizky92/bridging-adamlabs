@@ -3,6 +3,7 @@
 namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Support\Str;
 
 /**
  * @template TModel of class-string<\Illuminate\Database\Eloquent\Model>
@@ -46,9 +47,7 @@ class DoesntExist implements Rule
      */
     public function message()
     {
-        $model = str(class_basename($this->model))
-            ->headline()
-            ->value();
+        $model = Str::headline(class_basename($this->model));
 
         return ":Attribute tidak boleh menggunakan {$model} yang sudah ada!";
     }
