@@ -43,7 +43,7 @@ class SimpanHasilLabRequest extends FormRequest
             'pasien.alamat'                                        => ['nullable', 'string'],
             'pasien.nik'                                           => ['nullable', 'string'],
             'pasien.no_telphone'                                   => ['nullable', 'string'],
-            'pasien.ras'                                           => ['nullable', 'string'],
+            'pasien.ras'                                           => ['sometimes', 'nullable', 'string'],
             'pasien.berat_badan'                                   => ['nullable', 'string'],
             'pasien.jenis_registrasi'                              => ['required', Rule::in(['Reguler', 'Cito'])],
             'dokter_pengirim.kode'                                 => ['nullable'],
@@ -52,6 +52,9 @@ class SimpanHasilLabRequest extends FormRequest
             'unit_asal.nama'                                       => ['nullable'],
             'penjamin.kode'                                        => ['nullable'],
             'penjamin.nama'                                        => ['nullable'],
+            'username'                                             => ['sometimes', 'nullable', 'string'],
+            'nama_pegawai'                                         => ['sometimes', 'nullable', 'string'],
+            'dokter_penanggung_jawab'                              => ['sometimes', 'nullable', 'string'],
             'pemeriksaan'                                          => ['array'],
             'pemeriksaan.*.nomor_urut'                             => ['nullable', 'integer'],
             'pemeriksaan.*.kode_tindakan_simrs'                    => ['required', 'string'],
@@ -64,10 +67,10 @@ class SimpanHasilLabRequest extends FormRequest
             'pemeriksaan.*.kategori_pemeriksaan.nomor_urut'        => ['nullable', 'integer'],
             'pemeriksaan.*.sub_kategori_pemeriksaan.nama_kategori' => ['nullable', 'string'],
             'pemeriksaan.*.sub_kategori_pemeriksaan.nomor_urut'    => ['nullable', 'integer'],
-            'pemeriksaan.*.hasil.satuan'                           => ['nullable', 'string'],
-            'pemeriksaan.*.hasil.nilai_hasil'                      => ['required', 'string'],
-            'pemeriksaan.*.hasil.nilai_rujukan'                    => ['nullable', 'string'],
-            'pemeriksaan.*.hasil.flag_kode'                        => ['nullable', 'string'],
+            'pemeriksaan.*.hasil.satuan'                           => ['sometimes', 'nullable', 'string'],
+            'pemeriksaan.*.hasil.nilai_hasil'                      => ['present', 'required', 'string'],
+            'pemeriksaan.*.hasil.nilai_rujukan'                    => ['sometimes', 'nullable', 'string'],
+            'pemeriksaan.*.hasil.flag_kode'                        => ['sometimes', 'nullable', 'string'],
         ];
     }
 }

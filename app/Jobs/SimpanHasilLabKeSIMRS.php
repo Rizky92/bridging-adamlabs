@@ -124,12 +124,26 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                     ->whereIn('kd_jenis_prw', $tindakanDariLIS)
                     ->get()
                     ->each(function (TindakanLab $tindakan) use ($registrasi, $permintaanLab, $kodeDokterPJ, $tindakanTersedia) {
+                        HasilPeriksaLab::query()
+                            ->where('no_rawat', $this->noRawat)
+                            ->where('kd_jenis_prw', $tindakan->kd_jenis_prw)
+                            ->where('tgl_periksa', $this->tgl)
+                            ->where('jam', $this->jam)
+                            ->delete();
+
+                        HasilPeriksaLabDetail::query()
+                            ->where('no_rawat', $this->noRawat)
+                            ->where('kd_jenis_prw', $tindakan->kd_jenis_prw)
+                            ->where('tgl_periksa', $this->tgl)
+                            ->where('jam', $this->jam)
+                            ->delete();
+
                         HasilPeriksaLab::create([
                             'no_rawat'               => $this->noRawat,
-                            'nip'                    => '-',
                             'kd_jenis_prw'           => $tindakan->kd_jenis_prw,
                             'tgl_periksa'            => $this->tgl,
                             'jam'                    => $this->jam,
+                            'nip'                    => '-',
                             'dokter_perujuk'         => $permintaanLab->dokter_perujuk,
                             'bagian_rs'              => $tindakan->bagian_rs,
                             'bhp'                    => $tindakan->bhp,
@@ -163,9 +177,9 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                                     'tgl_periksa'    => $this->tgl,
                                     'jam'            => $this->jam,
                                     'id_template'    => $template->id_template,
-                                    'nilai'          => $detailPemeriksaan->hasil_nilai_hasil,
-                                    'nilai_rujukan'  => $detailPemeriksaan->hasil_nilai_rujukan,
-                                    'keterangan'     => $detailPemeriksaan->hasil_flag_kode,
+                                    'nilai'          => $detailPemeriksaan->hasil_nilai_hasil ?? '',
+                                    'nilai_rujukan'  => $detailPemeriksaan->hasil_nilai_rujukan ?? '',
+                                    'keterangan'     => $detailPemeriksaan->hasil_flag_kode ?? '',
                                     'bagian_rs'      => $template->bagian_rs,
                                     'bhp'            => $template->bhp,
                                     'bagian_perujuk' => $template->bagian_perujuk,
