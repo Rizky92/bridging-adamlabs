@@ -87,7 +87,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
 
         $tindakanDariLIS = $registrasi->pemeriksaan->pluck('kode_tindakan_simrs')->unique()->values();
 
-        $waktuPeriksa = carbon($registrasi->first()->pemeriksaan->first()->waktu_pemeriksaan);
+        $waktuPeriksa = carbon_immutable($registrasi->pemeriksaan->first()->waktu_pemeriksaan);
         $this->tgl = $waktuPeriksa->toDateString();
         $this->jam = $waktuPeriksa->format('H:i:s');
 
