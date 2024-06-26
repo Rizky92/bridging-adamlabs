@@ -74,6 +74,9 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
             ->where('noorder', $this->noOrderLabSIMRS)
             ->first();
 
+        $this->tgl = $permintaanLab->tgl_hasil;
+        $this->jam = $permintaanLab->jam_hasil;
+
         $this->noRawat = $permintaanLab->no_rawat;
         $this->statusRawat = $permintaanLab->status;
 
@@ -84,10 +87,6 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
             ->first();
 
         $tindakanDariLIS = $registrasi->pemeriksaan->pluck('kode_tindakan_simrs')->unique()->values();
-
-        $waktuPeriksa = carbon($registrasi->first()->pemeriksaan->first()->waktu_pemeriksaan);
-        $this->tgl = $waktuPeriksa->toDateString();
-        $this->jam = $waktuPeriksa->format('H:i:s');
 
         $this->jenisKelamin = $registrasi->pasien_jenis_kelamin === 'L'
             ? 'Laki-laki' : 'Perempuan';
