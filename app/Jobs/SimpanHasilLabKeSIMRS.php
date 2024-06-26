@@ -103,9 +103,9 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
 
         $tindakanTersedia = MappingTindakan::query()
             ->whereIn('kd_jenis_prw', $tindakanDariLIS)
-            ->whereIn('pemeriksaan', $registrasi->pemeriksaan->pluck('nama_pemeriksaan_lis'))
             ->where('jenis_kelamin', $this->jenisKelamin)
             ->where('status_umur', $this->statusUmur)
+            ->whereIn('kode_pemeriksaan_lis', $registrasi->pemeriksaan->pluck('kode_pemeriksaan_lis'))
             ->groupBy(['kd_jenis_prw', 'pemeriksaan'])
             ->orderBy('kd_jenis_prw')
             ->orderBy('urutan')
@@ -124,20 +124,6 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                     ->whereIn('kd_jenis_prw', $tindakanDariLIS)
                     ->get()
                     ->each(function (TindakanLab $tindakan) use ($registrasi, $permintaanLab, $kodeDokterPJ, $tindakanTersedia) {
-                        HasilPeriksaLab::query()
-                            ->where('no_rawat', $this->noRawat)
-                            ->where('kd_jenis_prw', $tindakan->kd_jenis_prw)
-                            ->where('tgl_periksa', $this->tgl)
-                            ->where('jam', $this->jam)
-                            ->delete();
-
-                        HasilPeriksaLabDetail::query()
-                            ->where('no_rawat', $this->noRawat)
-                            ->where('kd_jenis_prw', $tindakan->kd_jenis_prw)
-                            ->where('tgl_periksa', $this->tgl)
-                            ->where('jam', $this->jam)
-                            ->delete();
-
                         HasilPeriksaLab::create([
                             'no_rawat'               => $this->noRawat,
                             'kd_jenis_prw'           => $tindakan->kd_jenis_prw,
@@ -167,8 +153,8 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                             ->get()
                             ->each(function (TindakanLabTemplate $template) use ($pemeriksaan, $tindakanTersedia) {
                                 $detailPemeriksaan = $pemeriksaan->where(
-                                    'nama_pemeriksaan_lis',
-                                    $tindakanTersedia->where('id_template', $template->id_template)->first()->pemeriksaan
+                                    'kode_pemeriksaan_lis',
+                                    $tindakanTersedia->where('id_template', $template->id_template)->first()->kode_pemeriksaan_lis
                                 )->first();
 
                                 HasilPeriksaLabDetail::create([

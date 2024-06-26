@@ -3,11 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\UpdateHasilLabRequest;
-use App\Jobs\SimpanHasilLabKeSIMRS;
 use App\Jobs\UpdateHasilLabKeSIMRS;
 use App\Models\Pemeriksaan;
-use App\Models\Registrasi;
-use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 
@@ -25,7 +22,6 @@ class UpdateHasilLabController
                 ->where('kode_pemeriksaan_lis', Arr::get($pemeriksaan, 'kode_pemeriksaan_lis'))
                 ->where('nama_pemeriksaan_lis', Arr::get($pemeriksaan, 'nama_pemeriksaan_lis'))
                 ->update([
-                    'waktu_pemeriksaan' => Arr::get($pemeriksaan, 'waktu_pemeriksaan'),
                     'hasil_nilai_hasil' => Arr::get($pemeriksaan, 'hasil.nilai_hasil'),
                     'hasil_flag_kode'   => Arr::get($pemeriksaan, 'hasil.flag_kode'),
                 ]);
