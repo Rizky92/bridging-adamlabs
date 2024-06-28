@@ -27,7 +27,7 @@ class UpdateHasilLabRequest extends FormRequest
         return [
             'no_laboratorium'                                      => ['required', 'exists:registrasi,no_laboratorium'],
             'no_registrasi'                                        => ['required'],
-            'waktu_registrasi'                                     => ['required', 'date'],
+            'waktu_registrasi'                                     => ['sometimes', 'nullable', 'date'],
             'diagnosa_awal'                                        => ['nullable', 'string'],
             'kode_RS'                                              => ['required', 'string'],
             'kode_lab'                                             => ['required', 'string'],
