@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('pemeriksaan', function (Blueprint $table) {
-            $table->longText('hasil_nilai_hasil')->change();
-            $table->longText('hasil_nilai_rujukan')->change();
+            $table->string('hasil_nilai_hasil', 500)->change();
+            $table->string('hasil_nilai_rujukan', 500)->change();
         });
     }
 };
