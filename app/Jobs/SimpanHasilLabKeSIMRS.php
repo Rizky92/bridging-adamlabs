@@ -213,8 +213,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                                     $this->totalPendapatan += $template->biaya_item;
                                 });
                         });
-
-                    
+                    $this->catatJurnal();
                 });
         } catch (Throwable $e) {
             Registrasi::query()
@@ -225,7 +224,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
         }
     }
 
-    private function catatJurnal(): bool
+    private function catatJurnal(): void
     {
         $akunLaborat = null;
 
@@ -273,6 +272,10 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                     'Utang_Jasa_Menejemen_Laborat_Ralan as utang_jasa_manajemen',
                 ])
                 ->first();
+        }
+
+        if (! $akunLaborat) {
+            return;
         }
 
         $detailJurnal = collect();
@@ -328,7 +331,5 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                 )
                 ->all()
         );
-
-        return true;
     }
 }
