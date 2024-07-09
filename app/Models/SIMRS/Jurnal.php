@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\SIMRS\Jurnal;
+namespace App\Models\SIMRS;
 
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
