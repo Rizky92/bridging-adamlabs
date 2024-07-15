@@ -6,7 +6,6 @@ use App\Http\Requests\API\SimpanHasilLabRequest;
 use App\Jobs\SimpanHasilLabKeSIMRS;
 use App\Models\Pemeriksaan;
 use App\Models\Registrasi;
-use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 
@@ -61,22 +60,23 @@ class SimpanHasilLabController
                 'nama_pemeriksaan_lis'          => Arr::get($pemeriksaan, 'nama_pemeriksaan_lis'),
                 'metode'                        => Arr::get($pemeriksaan, 'metode'),
                 'waktu_pemeriksaan'             => Arr::get($pemeriksaan, 'waktu_pemeriksaan'),
-                'status_bridging'               => Arr::get($pemeriksaan, 'status_bridging'),
+                'status_bridging'               => true,
                 'hasil_satuan'                  => Arr::get($pemeriksaan, 'hasil.satuan'),
                 'hasil_nilai_hasil'             => Arr::get($pemeriksaan, 'hasil.nilai_hasil'),
                 'hasil_nilai_rujukan'           => Arr::get($pemeriksaan, 'hasil.nilai_rujukan'),
                 'hasil_flag_kode'               => Arr::get($pemeriksaan, 'hasil.flag_kode'),
+                'compound'                      => sprintf('%s-%s-adamlabs', Arr::get($pemeriksaan, 'kode_pemeriksaan_lis'), Arr::get($pemeriksaan, 'kategori_pemeriksaan.nama_kategori')),
             ]);
         }
 
         SimpanHasilLabKeSIMRS::dispatch([
             'no_laboratorium' => $data['no_laboratorium'],
-            'no_registrasi' => $data['no_registrasi'],
+            'no_registrasi'   => $data['no_registrasi'],
         ]);
 
         return response()->json([
-            'status' => true,
-            'code' => 200,
+            'status'  => true,
+            'code'    => 200,
             'message' => 'Data berhasil disimpan',
         ]);
     }

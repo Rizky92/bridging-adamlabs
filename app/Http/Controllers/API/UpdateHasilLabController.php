@@ -29,12 +29,12 @@ class UpdateHasilLabController
 
         UpdateHasilLabKeSIMRS::dispatch([
             'no_laboratorium' => $data['no_laboratorium'],
-            'no_registrasi' => $data['no_registrasi'],
+            'no_registrasi'   => $data['no_registrasi'],
         ]);
 
         return response()->json([
-            'status' => true,
-            'code' => 200,
+            'status'  => true,
+            'code'    => 200,
             'message' => 'Data berhasil diupdate',
         ]);
     }

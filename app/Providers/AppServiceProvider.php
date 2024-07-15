@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Stringable;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Stringable::macro('value', fn (): string => $this->value);
+        Stringable::macro('toInt', fn (): int => intval($this->value));
+        Stringable::macro('wrap', fn (string $startsWith, ?string $endsWith = null): Stringable => is_null($endsWith)
+            ? new Stringable($startsWith.$this->value.$startsWith)
+            : new Stringable($startsWith.$this->value.$endsWith));
     }
 }

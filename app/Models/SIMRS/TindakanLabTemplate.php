@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 
@@ -26,6 +27,15 @@ class TindakanLabTemplate extends Model
     public function tindakan(): BelongsTo
     {
         return $this->belongsTo(TindakanLab::class, 'kd_jenis_prw', 'kd_jenis_prw');
+    }
+
+    public function mapping(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            PemeriksaanLab::class, 'mapping_pemeriksaan_labpk',
+            'id_template', 'id_pemeriksaan',
+            'id_template', 'id'
+        );
     }
 
     /**
