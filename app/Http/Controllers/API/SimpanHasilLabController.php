@@ -60,7 +60,7 @@ class SimpanHasilLabController
                 'nama_pemeriksaan_lis'          => Arr::get($pemeriksaan, 'nama_pemeriksaan_lis'),
                 'metode'                        => Arr::get($pemeriksaan, 'metode'),
                 'waktu_pemeriksaan'             => Arr::get($pemeriksaan, 'waktu_pemeriksaan'),
-                'status_bridging'               => true,
+                'status_bridging'               => false,
                 'hasil_satuan'                  => Arr::get($pemeriksaan, 'hasil.satuan'),
                 'hasil_nilai_hasil'             => Arr::get($pemeriksaan, 'hasil.nilai_hasil'),
                 'hasil_nilai_rujukan'           => Arr::get($pemeriksaan, 'hasil.nilai_rujukan'),
@@ -77,7 +77,7 @@ class SimpanHasilLabController
         return response()->json([
             'status'  => true,
             'code'    => 200,
-            'message' => 'Data berhasil disimpan',
+            'message' => 'Hasil pemeriksaan segera diproses.',
         ]);
     }
 }

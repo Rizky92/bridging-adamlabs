@@ -89,29 +89,20 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
 
         $this->noRawat = $permintaanLab->no_rawat;
         $this->statusRawat = $permintaanLab->status;
-
-        $waktuRegistrasi = carbon_immutable($registrasi->pemeriksaan->first()->waktu_pemeriksaan);
-
-        $this->tgl = $waktuRegistrasi->toDateString();
-        $this->jam = $waktuRegistrasi->format('H:i:s');
+        $this->tgl = $permintaanLab->tgl_hasil;
+        $this->jam = $permintaanLab->jam_hasil;
 
         $kategori = $registrasi->pemeriksaan->pluck('kategori_pemeriksaan_nama')->filter()->unique()->values();
         $tindakan = $registrasi->pemeriksaan->pluck('kode_tindakan_simrs')->filter()->unique()->values();
+        $tindakanSudahAda = $registrasi->pemeriksaan->filter(fn ($p) => $p->status_bridging === true)->pluck('kode_tindakan_simrs')->filter()->unique()->values();
         $compound = $registrasi->pemeriksaan->pluck('compound')->filter()->unique()->values();
 
         $dokterPJLab = DB::connection('mysql_sik')->table('set_pjlab')->value('kd_dokterlab');
 
         DB::connection('mysql_sik')
-            ->transaction(function () use ($registrasi, $kategori, $tindakan, $compound, $dokterPJLab) {
-                PermintaanLabPK::query()
-                    ->where('noorder', $this->noRegistrasi)
-                    ->update([
-                        'tgl_hasil' => $this->tgl,
-                        'jam_hasil' => $this->jam,
-                    ]);
-                
+            ->transaction(function () use ($registrasi, $kategori, $tindakan, $tindakanSudahAda, $compound, $dokterPJLab) {
                 TindakanLab::query()
-                    ->whereIn('kd_jenis_prw', $tindakan)
+                    ->whereIn('kd_jenis_prw', $tindakan->diff($tindakanSudahAda))
                     ->get()
                     ->each(function (TindakanLab $t) use ($registrasi, $dokterPJLab) {
                         HasilPeriksaLab::create([
@@ -154,37 +145,48 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
                             ->whereStrict('compound', $p->kode_compound)
                             ->first();
 
-                        HasilPeriksaLabDetail::create([
-                            'no_rawat'       => $this->noRawat,
-                            'kd_jenis_prw'   => $p->kd_jenis_prw,
-                            'tgl_periksa'    => $this->tgl,
-                            'jam'            => $this->jam,
-                            'id_template'    => $p->id_template,
-                            'nilai'          => $pemeriksaan->hasil_nilai_hasil,
-                            'nilai_rujukan'  => $pemeriksaan->hasil_nilai_rujukan ?? '',
-                            'keterangan'     => $pemeriksaan->hasil_flag_kode ?? '',
-                            'bagian_rs'      => $p->pemeriksaan_jasa_sarana,
-                            'bhp'            => $p->pemeriksaan_bhp,
-                            'bagian_perujuk' => $p->pemeriksaan_jasa_perujuk,
-                            'bagian_dokter'  => $p->pemeriksaan_jasa_medis_dokter,
-                            'bagian_laborat' => $p->pemeriksaan_jasa_medis_petugas,
-                            'kso'            => $p->pemeriksaan_kso,
-                            'menejemen'      => $p->pemeriksaan_manajemen,
-                            'biaya_item'     => $p->pemeriksaan_pendapatan,
-                        ]);
-
-                        $this->totalJasaSarana       += $p->pemeriksaan_jasa_sarana;
-                        $this->totalBHP              += $p->pemeriksaan_bhp;
-                        $this->totalJasaPerujuk      += $p->pemeriksaan_jasa_perujuk;
-                        $this->totalJasaMedisDokter  += $p->pemeriksaan_jasa_medis_dokter;
-                        $this->totalJasaMedisPetugas += $p->pemeriksaan_jasa_medis_petugas;
-                        $this->totalKSO              += $p->pemeriksaan_kso;
-                        $this->totalManajemen        += $p->pemeriksaan_manajemen;
-                        $this->totalPendapatan       += $p->pemeriksaan_pendapatan;
+                        if ($pemeriksaan->status_bridging) {
+                            HasilPeriksaLabDetail::query()
+                                ->where('no_rawat', $this->noRawat)
+                                ->where('kd_jenis_prw', $p->kd_jenis_prw)
+                                ->where('tgl_periksa', $this->tgl)
+                                ->where('jam', $this->jam)
+                                ->where('id_template', $p->id_template)
+                                ->update([
+                                    'nilai'      => $pemeriksaan->hasil_nilai_hasil,
+                                    'keterangan' => $pemeriksaan->hasil_flag_kode ?? '',
+                                ]);
+                        } else {
+                            HasilPeriksaLabDetail::create([
+                                'no_rawat'       => $this->noRawat,
+                                'kd_jenis_prw'   => $p->kd_jenis_prw,
+                                'tgl_periksa'    => $this->tgl,
+                                'jam'            => $this->jam,
+                                'id_template'    => $p->id_template,
+                                'nilai'          => $pemeriksaan->hasil_nilai_hasil,
+                                'nilai_rujukan'  => $pemeriksaan->hasil_nilai_rujukan ?? '',
+                                'keterangan'     => $pemeriksaan->hasil_flag_kode ?? '',
+                                'bagian_rs'      => $p->pemeriksaan_jasa_sarana,
+                                'bhp'            => $p->pemeriksaan_bhp,
+                                'bagian_perujuk' => $p->pemeriksaan_jasa_perujuk,
+                                'bagian_dokter'  => $p->pemeriksaan_jasa_medis_dokter,
+                                'bagian_laborat' => $p->pemeriksaan_jasa_medis_petugas,
+                                'kso'            => $p->pemeriksaan_kso,
+                                'menejemen'      => $p->pemeriksaan_manajemen,
+                                'biaya_item'     => $p->pemeriksaan_pendapatan,
+                            ]);
+    
+                            $this->totalJasaSarana       += $p->pemeriksaan_jasa_sarana;
+                            $this->totalBHP              += $p->pemeriksaan_bhp;
+                            $this->totalJasaPerujuk      += $p->pemeriksaan_jasa_perujuk;
+                            $this->totalJasaMedisDokter  += $p->pemeriksaan_jasa_medis_dokter;
+                            $this->totalJasaMedisPetugas += $p->pemeriksaan_jasa_medis_petugas;
+                            $this->totalKSO              += $p->pemeriksaan_kso;
+                            $this->totalManajemen        += $p->pemeriksaan_manajemen;
+                            $this->totalPendapatan       += $p->pemeriksaan_pendapatan;
+                        }
                     });
-
                 $this->catatJurnal();
-
             });
     }
 
@@ -293,7 +295,7 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
             Jurnal::catat(
                 $this->noRawat,
                 sprintf('PEMERIKSAAN LABORAT RAWAT %s, DIPOSTING OLEH %s', str()->upper($this->statusRawat), 'SERVICE LIS'),
-                $this->tgl . ' ' . $this->jam,
+                'now',
                 $detailJurnal->all()
             );
         }

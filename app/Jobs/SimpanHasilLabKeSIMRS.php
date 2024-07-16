@@ -293,16 +293,18 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
             $detailJurnal->push(['kd_rek' => $akunLaborat->utang_manajemen, 'debet' => 0, 'kredit' => $this->totalManajemen]);
         }
 
-        Jurnal::catat(
-            $this->noRawat,
-            sprintf('PEMERIKSAAN LABORAT RAWAT %s, DIPOSTING OLEH %s', str()->upper($this->statusRawat), 'SERVICE LIS'),
-            $this->tgl . ' ' . $this->jam,
-            $detailJurnal
-                ->reject(fn (array $value): bool =>
-                    isset($value['kd_rek'], $value['debet'], $value['kredit']) &&
-                    (round($value['debet'], 2) === 0.00 && round($value['kredit'], 2) === 0.00)
-                )
-                ->all()
+        $detailJurnal = $detailJurnal->reject(fn (array $value): bool =>
+            isset($value['kd_rek'], $value['debet'], $value['kredit']) &&
+            (round($value['debet'], 2) === 0.00 && round($value['kredit'], 2) === 0.00)
         );
+
+        if ($detailJurnal->isNotEmpty()) {
+            Jurnal::catat(
+                $this->noRawat,
+                sprintf('PEMERIKSAAN LABORAT RAWAT %s, DIPOSTING OLEH %s', str()->upper($this->statusRawat), 'SERVICE LIS'),
+                'now',
+                $detailJurnal->all()        
+            );
+        }
     }
 }

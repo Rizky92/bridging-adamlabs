@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Stringable;
 
@@ -29,5 +30,20 @@ class AppServiceProvider extends ServiceProvider
         Stringable::macro('wrap', fn (string $startsWith, ?string $endsWith = null): Stringable => is_null($endsWith)
             ? new Stringable($startsWith.$this->value.$startsWith)
             : new Stringable($startsWith.$this->value.$endsWith));
+
+        Collection::macro('overlap', function ($items = null) {
+            $items = collect($items);
+
+            if ($items->isEmpty()) {
+                return $this;
+            }
+
+            $originalItems = collect($this->items);
+
+            $a = $originalItems->diff($items);
+            $b = $items->diff($originalItems);
+
+            return new Collection($a->merge($b));
+        });
     }
 }

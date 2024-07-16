@@ -65,9 +65,9 @@ class UpdateHasilLabRequest extends FormRequest
             'pemeriksaan.*.kategori_pemeriksaan.nomor_urut'        => ['nullable', 'integer'],
             'pemeriksaan.*.sub_kategori_pemeriksaan.nama_kategori' => ['nullable', 'string'],
             'pemeriksaan.*.sub_kategori_pemeriksaan.nomor_urut'    => ['nullable', 'integer'],
-            'pemeriksaan.*.hasil.satuan'                           => ['exclude'],
+            'pemeriksaan.*.hasil.satuan'                           => ['sometimes', 'nullable', 'string'],
             'pemeriksaan.*.hasil.nilai_hasil'                      => ['present', 'required', 'string'],
-            'pemeriksaan.*.hasil.nilai_rujukan'                    => ['exclude'],
+            'pemeriksaan.*.hasil.nilai_rujukan'                    => ['sometimes', 'nullable', 'string'],
             'pemeriksaan.*.hasil.flag_kode'                        => ['sometimes', 'nullable', 'string'],
         ];
     }
