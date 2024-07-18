@@ -191,6 +191,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
         } catch (Throwable $e) {
             Registrasi::query()
                 ->where('no_registrasi', $this->noRegistrasi)
+                ->where('no_laboratorium', $this->noLaboratorium)
                 ->delete();
 
             throw $e;

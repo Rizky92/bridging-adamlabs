@@ -87,6 +87,8 @@ class PemeriksaanLab extends Model
             ->selectKolomMappingAdamlabs()
             ->whereIn('pemeriksaan_labpk.kategori', $kategori)
             ->whereIn('template_laboratorium.kd_jenis_prw', $tindakan)
-            ->whereIn('pemeriksaan_labpk.kode_compound', $compound);
+            ->whereIn('pemeriksaan_labpk.kode_compound', $compound)
+            ->orderBy('pemeriksaan_labpk_kategori.urut')
+            ->orderBy('pemeriksaan_labpk.urut');
     }
 }

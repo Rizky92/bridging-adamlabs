@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Pemeriksaan;
 use App\Models\Registrasi;
 use App\Models\SIMRS\HasilPeriksaLab;
 use App\Models\SIMRS\HasilPeriksaLabDetail;
@@ -99,8 +100,10 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
 
         $dokterPJLab = DB::connection('mysql_sik')->table('set_pjlab')->value('kd_dokterlab');
 
-        DB::connection('mysql_sik')
-            ->transaction(function () use ($registrasi, $kategori, $tindakan, $tindakanSudahAda, $compound, $dokterPJLab) {
+        try {
+            DB::connection('mysql_sik')->transaction(function () use (
+                $registrasi, $kategori, $tindakan, $tindakanSudahAda, $compound, $dokterPJLab
+            ) {
                 TindakanLab::query()
                     ->whereIn('kd_jenis_prw', $tindakan->diff($tindakanSudahAda))
                     ->get()
@@ -188,6 +191,15 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
                     });
                 $this->catatJurnal();
             });
+        } catch (Throwable $e) {
+            Pemeriksaan::query()
+                ->where('no_registrasi', $this->noRegistrasi)
+                ->where('no_laboratorium', $this->noLaboratorium)
+                ->where('status_bridging', false)
+                ->delete();
+
+            throw $e;
+        }
     }
 
     private function catatJurnal(): void
@@ -215,7 +227,7 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
                     'Beban_Jasa_Menejemen_Laborat_Ranap as beban_jasa_manajemen',
                     'Utang_Jasa_Menejemen_Laborat_Ranap as utang_jasa_manajemen',
                 ])
-                ->first();
+                ->firstOrFail();
         } else {
             $akunLaborat = DB::connection('mysql_sik')
                 ->table('set_akun_ralan')
@@ -237,7 +249,7 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
                     'Beban_Jasa_Menejemen_Laborat_Ralan as beban_jasa_manajemen',
                     'Utang_Jasa_Menejemen_Laborat_Ralan as utang_jasa_manajemen',
                 ])
-                ->first();
+                ->firstOrFail();
         }
 
         if (! $akunLaborat) {
