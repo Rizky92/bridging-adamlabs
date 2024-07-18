@@ -78,29 +78,29 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
 
     private function simpanHasilLab(): void
     {
-        $permintaanLab = PermintaanLabPK::query()
-            ->where('noorder', $this->noRegistrasi)
-            ->firstOrFail();
-
-        $registrasi = Registrasi::query()
-            ->with('pemeriksaan')
-            ->where('no_laboratorium', $this->noLaboratorium)
-            ->where('no_registrasi', $this->noRegistrasi)
-            ->firstOrFail();
-
-        $this->noRawat = $permintaanLab->no_rawat;
-        $this->statusRawat = $permintaanLab->status;
-        $this->tgl = $permintaanLab->tgl_hasil;
-        $this->jam = $permintaanLab->jam_hasil;
-
-        $kategori = $registrasi->pemeriksaan->pluck('kategori_pemeriksaan_nama')->filter()->unique()->values();
-        $tindakan = $registrasi->pemeriksaan->pluck('kode_tindakan_simrs')->filter()->unique()->values();
-        $tindakanSudahAda = $registrasi->pemeriksaan->filter(fn ($p) => $p->status_bridging === true)->pluck('kode_tindakan_simrs')->filter()->unique()->values();
-        $compound = $registrasi->pemeriksaan->pluck('compound')->filter()->unique()->values();
-
-        $dokterPJLab = DB::connection('mysql_sik')->table('set_pjlab')->value('kd_dokterlab');
-
         try {
+            $permintaanLab = PermintaanLabPK::query()
+                ->where('noorder', $this->noRegistrasi)
+                ->firstOrFail();
+
+            $registrasi = Registrasi::query()
+                ->with('pemeriksaan')
+                ->where('no_laboratorium', $this->noLaboratorium)
+                ->where('no_registrasi', $this->noRegistrasi)
+                ->firstOrFail();
+
+            $this->noRawat = $permintaanLab->no_rawat;
+            $this->statusRawat = $permintaanLab->status;
+            $this->tgl = $permintaanLab->tgl_hasil;
+            $this->jam = $permintaanLab->jam_hasil;
+
+            $kategori = $registrasi->pemeriksaan->pluck('kategori_pemeriksaan_nama')->filter()->unique()->values();
+            $tindakan = $registrasi->pemeriksaan->pluck('kode_tindakan_simrs')->filter()->unique()->values();
+            $tindakanSudahAda = $registrasi->pemeriksaan->filter(fn ($p) => $p->status_bridging === true)->pluck('kode_tindakan_simrs')->filter()->unique()->values();
+            $compound = $registrasi->pemeriksaan->pluck('compound')->filter()->unique()->values();
+
+            $dokterPJLab = DB::connection('mysql_sik')->table('set_pjlab')->value('kd_dokterlab');
+            
             DB::connection('mysql_sik')->transaction(function () use (
                 $registrasi, $kategori, $tindakan, $tindakanSudahAda, $compound, $dokterPJLab
             ) {
