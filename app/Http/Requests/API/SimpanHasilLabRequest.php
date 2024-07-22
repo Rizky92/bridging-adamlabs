@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests\API;
 
-use App\Models\Registrasi;
-use App\Rules\DoesntExist;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -27,7 +25,7 @@ class SimpanHasilLabRequest extends FormRequest
     public function rules()
     {
         return [
-            'no_laboratorium'                                      => ['required', new DoesntExist(Registrasi::class, 'no_laboratorium')],
+            'no_laboratorium'                                      => ['required'],
             'no_registrasi'                                        => ['required'],
             'waktu_registrasi'                                     => ['required', 'date'],
             'diagnosa_awal'                                        => ['nullable', 'string'],
@@ -36,16 +34,16 @@ class SimpanHasilLabRequest extends FormRequest
             'umur.tahun'                                           => ['nullable', 'integer'],
             'umur.bulan'                                           => ['nullable', 'integer'],
             'umur.hari'                                            => ['nullable', 'integer'],
-            'pasien.no_rm'                                         => ['required', 'string'],
-            'pasien.nama_pasien'                                   => ['required', 'string'],
-            'pasien.jenis_kelamin'                                 => ['nullable', 'string'],
-            'pasien.tanggal_lahir'                                 => ['nullable', 'string'],
-            'pasien.alamat'                                        => ['nullable', 'string'],
-            'pasien.nik'                                           => ['nullable', 'string'],
-            'pasien.no_telphone'                                   => ['nullable', 'string'],
+            'pasien.no_rm'                                         => ['nullable', 'string'],
+            'pasien.nama_pasien'                                   => ['sometimes', 'nullable', 'string'],
+            'pasien.jenis_kelamin'                                 => ['sometimes', 'nullable', 'string'],
+            'pasien.tanggal_lahir'                                 => ['sometimes', 'nullable', 'string'],
+            'pasien.alamat'                                        => ['sometimes', 'nullable', 'string'],
+            'pasien.nik'                                           => ['sometimes', 'nullable', 'string'],
+            'pasien.no_telphone'                                   => ['sometimes', 'nullable', 'string'],
             'pasien.ras'                                           => ['sometimes', 'nullable', 'string'],
             'pasien.berat_badan'                                   => ['nullable', 'string'],
-            'pasien.jenis_registrasi'                              => ['required', Rule::in(['Reguler', 'Cito'])],
+            'pasien.jenis_registrasi'                              => ['nullable', Rule::in(['Reguler', 'Cito'])],
             'dokter_pengirim.kode'                                 => ['nullable'],
             'dokter_pengirim.nama'                                 => ['nullable'],
             'unit_asal.kode'                                       => ['nullable'],
@@ -62,7 +60,7 @@ class SimpanHasilLabRequest extends FormRequest
             'pemeriksaan.*.nama_pemeriksaan_lis'                   => ['required', 'string'],
             'pemeriksaan.*.metode'                                 => ['nullable', 'string'],
             'pemeriksaan.*.waktu_pemeriksaan'                      => ['nullable', 'date'],
-            'pemeriksaan.*.status_bridging'                        => ['boolean'],
+            'pemeriksaan.*.status_bridging'                        => ['nullable', 'boolean'],
             'pemeriksaan.*.kategori_pemeriksaan.nama_kategori'     => ['nullable', 'string'],
             'pemeriksaan.*.kategori_pemeriksaan.nomor_urut'        => ['nullable', 'integer'],
             'pemeriksaan.*.sub_kategori_pemeriksaan.nama_kategori' => ['nullable', 'string'],

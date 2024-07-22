@@ -96,48 +96,9 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
 
             $kategori = $registrasi->pemeriksaan->pluck('kategori_pemeriksaan_nama')->filter()->unique()->values();
             $tindakan = $registrasi->pemeriksaan->pluck('kode_tindakan_simrs')->filter()->unique()->values();
-            $tindakanSudahAda = $registrasi->pemeriksaan->filter(fn ($p) => $p->status_bridging === true)->pluck('kode_tindakan_simrs')->filter()->unique()->values();
             $compound = $registrasi->pemeriksaan->pluck('compound')->filter()->unique()->values();
 
-            $dokterPJLab = DB::connection('mysql_sik')->table('set_pjlab')->value('kd_dokterlab');
-            
-            DB::connection('mysql_sik')->transaction(function () use (
-                $registrasi, $kategori, $tindakan, $tindakanSudahAda, $compound, $dokterPJLab
-            ) {
-                TindakanLab::query()
-                    ->whereIn('kd_jenis_prw', $tindakan->diff($tindakanSudahAda))
-                    ->get()
-                    ->each(function (TindakanLab $t) use ($registrasi, $dokterPJLab) {
-                        HasilPeriksaLab::create([
-                            'no_rawat'               => $this->noRawat,
-                            'nip'                    => '88888888',
-                            'kd_jenis_prw'           => $t->kd_jenis_prw,
-                            'tgl_periksa'            => $this->tgl,
-                            'jam'                    => $this->jam,
-                            'dokter_perujuk'         => $registrasi->dokter_pengirim_kode,
-                            'bagian_rs'              => $t->bagian_rs,
-                            'bhp'                    => $t->bhp,
-                            'tarif_perujuk'          => $t->tarif_perujuk,
-                            'tarif_tindakan_dokter'  => $t->tarif_tindakan_dokter,
-                            'tarif_tindakan_petugas' => $t->tarif_tindakan_petugas,
-                            'kso'                    => $t->kso,
-                            'menejemen'              => $t->menejemen,
-                            'biaya'                  => $t->total_byr,
-                            'kd_dokter'              => $dokterPJLab,
-                            'status'                 => str($this->statusRawat)->title()->value(),
-                            'kategori'               => 'PK'
-                        ]);
-
-                        $this->totalJasaSarana       += $t->bagian_rs;
-                        $this->totalBHP              += $t->bhp;
-                        $this->totalJasaPerujuk      += $t->tarif_perujuk;
-                        $this->totalJasaMedisDokter  += $t->tarif_tindakan_dokter;
-                        $this->totalJasaMedisPetugas += $t->tarif_tindakan_petugas;
-                        $this->totalKSO              += $t->kso;
-                        $this->totalManajemen        += $t->menejemen;
-                        $this->totalPendapatan       += $t->total_byr;
-                    });
-                
+            DB::connection('mysql_sik')->transaction(function () use ($registrasi, $kategori, $tindakan, $compound) {
                 PemeriksaanLab::query()
                     ->untukHasilPemeriksaan($kategori, $tindakan, $compound)
                     ->get()
@@ -227,7 +188,7 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
                     'Beban_Jasa_Menejemen_Laborat_Ranap as beban_jasa_manajemen',
                     'Utang_Jasa_Menejemen_Laborat_Ranap as utang_jasa_manajemen',
                 ])
-                ->firstOrFail();
+                ->first();
         } else {
             $akunLaborat = DB::connection('mysql_sik')
                 ->table('set_akun_ralan')
@@ -249,7 +210,7 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
                     'Beban_Jasa_Menejemen_Laborat_Ralan as beban_jasa_manajemen',
                     'Utang_Jasa_Menejemen_Laborat_Ralan as utang_jasa_manajemen',
                 ])
-                ->firstOrFail();
+                ->first();
         }
 
         if (! $akunLaborat) {
