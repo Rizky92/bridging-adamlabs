@@ -7,9 +7,11 @@ use App\Models\Registrasi;
 use App\Models\SIMRS\HasilPeriksaLab;
 use App\Models\SIMRS\HasilPeriksaLabDetail;
 use App\Models\SIMRS\Jurnal;
+use App\Models\SIMRS\KesanSaran;
 use App\Models\SIMRS\PemeriksaanLab;
 use App\Models\SIMRS\PermintaanLabPK;
 use App\Models\SIMRS\TindakanLab;
+use DOMDocument;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -198,6 +200,15 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                                 $this->totalPendapatan       += $p->pemeriksaan_pendapatan;
                             }
                         });
+
+                    KesanSaran::create([
+                        'no_rawat'    => $this->noRawat,
+                        'tgl_periksa' => $this->tgl,
+                        'jam'         => $this->jam,
+                        'saran'       => '',
+                        'kesan'       => tap(new DOMDocument)->loadHTML($registrasi->keterangan_hasil)->textContent,
+                    ]);
+                    
                     $this->catatJurnal();
                 });
         } catch (Throwable $e) {

@@ -23,6 +23,7 @@ class Registrasi extends Model
         'no_laboratorium',
         'no_registrasi',
         'waktu_registrasi',
+        'keterangan_hasil',
         'diagnosa_awal',
         'kode_rs',
         'kode_lab',

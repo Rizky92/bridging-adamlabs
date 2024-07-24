@@ -28,6 +28,7 @@ class SimpanHasilLabRequest extends FormRequest
             'no_laboratorium'                                      => ['required'],
             'no_registrasi'                                        => ['required'],
             'waktu_registrasi'                                     => ['required', 'date'],
+            'keterangan_hasil'                                     => ['nullable', 'string', 'max:500'],
             'diagnosa_awal'                                        => ['nullable', 'string'],
             'kode_RS'                                              => ['required', 'string'],
             'kode_lab'                                             => ['required', 'string'],
@@ -66,8 +67,8 @@ class SimpanHasilLabRequest extends FormRequest
             'pemeriksaan.*.sub_kategori_pemeriksaan.nama_kategori' => ['nullable', 'string'],
             'pemeriksaan.*.sub_kategori_pemeriksaan.nomor_urut'    => ['nullable', 'integer'],
             'pemeriksaan.*.hasil.satuan'                           => ['sometimes', 'nullable', 'string'],
-            'pemeriksaan.*.hasil.nilai_hasil'                      => ['present', 'required', 'string'],
-            'pemeriksaan.*.hasil.nilai_rujukan'                    => ['sometimes', 'nullable', 'string'],
+            'pemeriksaan.*.hasil.nilai_hasil'                      => ['present', 'required', 'string', 'max:500'],
+            'pemeriksaan.*.hasil.nilai_rujukan'                    => ['sometimes', 'nullable', 'string', 'max:500'],
             'pemeriksaan.*.hasil.flag_kode'                        => ['sometimes', 'nullable', 'string'],
         ];
     }

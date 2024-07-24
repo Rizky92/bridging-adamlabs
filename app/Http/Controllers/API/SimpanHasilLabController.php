@@ -19,6 +19,7 @@ class SimpanHasilLabController
             ['no_registrasi'   => Arr::get($data, 'no_registrasi'), 'no_laboratorium' => Arr::get($data, 'no_laboratorium')],
             [
                 'waktu_registrasi'        => Arr::get($data, 'waktu_registrasi'),
+                'keterangan_hasil'        => Arr::get($data, 'keterangan_hasil'),
                 'diagnosa_awal'           => Arr::get($data, 'diagnosa_awal'),
                 'kode_rs'                 => Arr::get($data, 'kode_RS'),
                 'kode_lab'                => Arr::get($data, 'kode_lab'),

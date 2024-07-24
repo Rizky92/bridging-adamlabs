@@ -5,6 +5,7 @@ namespace App\Models\SIMRS;
 use Illuminate\Database\Eloquent\Model;
 use Reedware\LaravelCompositeRelations\CompositeBelongsTo;
 use Reedware\LaravelCompositeRelations\CompositeHasMany;
+use Reedware\LaravelCompositeRelations\CompositeHasOne;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 
 class HasilPeriksaLab extends Model
@@ -52,6 +53,15 @@ class HasilPeriksaLab extends Model
                 ['no_rawat', 'tgl_periksa', 'jam']
             )
             ->where('kategori', 'PK');
+    }
+
+    public function catatan(): CompositeHasOne
+    {
+        return $this->compositeHasOne(
+            KesanSaran::class,
+            ['no_rawat', 'tgl_periksa', 'jam'],
+            ['no_rawat', 'tgl_periksa', 'jam']
+        );
     }
 
     public function detail(): CompositeHasMany
