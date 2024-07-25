@@ -11,7 +11,6 @@ use App\Models\SIMRS\KesanSaran;
 use App\Models\SIMRS\PemeriksaanLab;
 use App\Models\SIMRS\PermintaanLabPK;
 use App\Models\SIMRS\TindakanLab;
-use DOMDocument;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -40,6 +39,10 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
 
     private string $dokterPj;
 
+    private string $username;
+
+    private string $nip;
+
     private float $totalJasaMedisDokter = 0;
 
     private float $totalJasaMedisPetugas = 0;
@@ -62,12 +65,14 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
      * @param  array{
      *     no_laboratorium: string,
      *     no_registrasi: string
-     * }  $options
+     *     user: string
+     * }  $params
      */
-    public function __construct(array $options)
+    public function __construct(array $params)
     {
-        $this->noLaboratorium = $options['no_laboratorium'];
-        $this->noRegistrasi = $options['no_registrasi'];
+        $this->noLaboratorium = $params['no_laboratorium'];
+        $this->noRegistrasi = $params['no_registrasi'];
+        $this->username = $params['username'];
     }
 
     /**
@@ -75,7 +80,16 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
      */
     public function handle()
     {
+        $this->cariUser();
         $this->simpanHasilLab();
+    }
+
+    private function cariUser(): void
+    {
+        $this->nip = DB::connection('mysql_sik')->table('mapping_user_adamlabs')
+            ->where('vendor', 'adamlabs')
+            ->where('username', $this->username)
+            ->value('nip');
     }
 
     private function simpanHasilLab(): void
@@ -104,10 +118,10 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
             $tindakanSudahAda = $registrasi->pemeriksaan->filter(fn ($p) => $p->status_bridging === true)->pluck('kode_tindakan_simrs')->filter()->unique()->values();
             $compound = $registrasi->pemeriksaan->pluck('compound')->filter()->unique()->values();
 
-            $dokterPJLab = DB::connection('mysql_sik')->table('set_pjlab')->value('kd_dokterlab');
+            $this->dokterPj = DB::connection('mysql_sik')->table('set_pjlab')->value('kd_dokterlab');
 
             DB::connection('mysql_sik')
-                ->transaction(function () use ($registrasi, $kategori, $tindakan, $tindakanSudahAda, $compound, $dokterPJLab) {
+                ->transaction(function () use ($registrasi, $kategori, $tindakan, $tindakanSudahAda, $compound) {
                     PermintaanLabPK::query()
                         ->where('noorder', $this->noRegistrasi)
                         ->update([
@@ -118,10 +132,10 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                     TindakanLab::query()
                         ->whereIn('kd_jenis_prw', $tindakan->diff($tindakanSudahAda))
                         ->get()
-                        ->each(function (TindakanLab $t) use ($registrasi, $dokterPJLab) {
+                        ->each(function (TindakanLab $t) use ($registrasi) {
                             HasilPeriksaLab::create([
                                 'no_rawat'               => $this->noRawat,
-                                'nip'                    => '88888888',
+                                'nip'                    => $this->nip,
                                 'kd_jenis_prw'           => $t->kd_jenis_prw,
                                 'tgl_periksa'            => $this->tgl,
                                 'jam'                    => $this->jam,
@@ -134,7 +148,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                                 'kso'                    => $t->kso,
                                 'menejemen'              => $t->menejemen,
                                 'biaya'                  => $t->total_byr,
-                                'kd_dokter'              => $dokterPJLab,
+                                'kd_dokter'              => $this->dokterPj,
                                 'status'                 => str($this->statusRawat)->title()->value(),
                                 'kategori'               => 'PK'
                             ]);
@@ -206,9 +220,12 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                         'tgl_periksa' => $this->tgl,
                         'jam'         => $this->jam,
                         'saran'       => '',
-                        'kesan'       => tap(new DOMDocument)->loadHTML($registrasi->keterangan_hasil)->textContent,
+                        'kesan'       => str($registrasi->keterangan_hasil)
+                            ->replace(['<br>', '<br />', '<br/>'], "\n")
+                            ->stripTags()
+                            ->value(),
                     ]);
-                    
+
                     $this->catatJurnal();
                 });
         } catch (Throwable $e) {
@@ -337,7 +354,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
         if ($detailJurnal->isNotEmpty()) {
             Jurnal::catat(
                 $this->noRawat,
-                sprintf('PEMERIKSAAN LABORAT RAWAT %s, DIPOSTING OLEH %s', str()->upper($this->statusRawat), 'SERVICE LIS'),
+                sprintf('PEMERIKSAAN LABORAT RAWAT %s, DIPOSTING OLEH %s', str()->title($this->statusRawat)->value(), $this->nip),
                 'now',
                 $detailJurnal->all()        
             );

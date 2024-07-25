@@ -38,6 +38,10 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
 
     private string $dokterPj;
 
+    private string $username;
+
+    private string $nip;
+
     private float $totalJasaMedisDokter = 0;
 
     private float $totalJasaMedisPetugas = 0;
@@ -60,6 +64,7 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
      * @param  array{
      *     no_laboratorium: string,
      *     no_registrasi: string
+     *     username: string
      * }  $options
      */
     public function __construct(array $options)

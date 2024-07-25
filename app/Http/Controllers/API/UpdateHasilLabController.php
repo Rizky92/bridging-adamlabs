@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Requests\API\UpdateHasilLabRequest;
 use App\Jobs\UpdateHasilLabKeSIMRS;
 use App\Models\Pemeriksaan;
+use App\Models\Registrasi;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 
@@ -13,6 +14,13 @@ class UpdateHasilLabController
     public function __invoke(UpdateHasilLabRequest $request): JsonResponse
     {
         $data = $request->validated();
+
+        Registrasi::query()
+            ->where('no_laboratorium', $data['no_laboratorium'])
+            ->where('no_registrasi', $data['no_registrasi'])
+            ->update([
+                'keterangan_hasil' => $data['keterangan_hasil'],
+            ]);
 
         foreach ($data['pemeriksaan'] as $pemeriksaan) {
             Pemeriksaan::query()

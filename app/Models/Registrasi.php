@@ -49,7 +49,6 @@ class Registrasi extends Model
         'unit_asal_nama',
         'penjamin_kode',
         'penjamin_nama',
-        'pegawai',
     ];
 
     public function pemeriksaan(): HasMany

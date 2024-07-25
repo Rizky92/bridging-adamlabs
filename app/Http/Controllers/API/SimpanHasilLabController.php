@@ -88,6 +88,7 @@ class SimpanHasilLabController
         SimpanHasilLabKeSIMRS::dispatch([
             'no_laboratorium' => $data['no_laboratorium'],
             'no_registrasi'   => $data['no_registrasi'],
+            'username'        => $data['username'],
         ]);
 
         return response()->json([

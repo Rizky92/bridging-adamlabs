@@ -12,9 +12,13 @@ return new class extends Migration
             $table->string('no_laboratorium', 20);
             $table->string('no_registrasi', 15)->index();
             $table->dateTime('waktu_registrasi')->index();
+            $table->string('keterangan_hasil', 700)->nullable();
             $table->string('diagnosa_awal', 20)->nullable();
             $table->string('kode_rs', 10)->nullable();
             $table->string('kode_lab', 10)->nullable();
+            $table->string('username', 100)->nullable();
+            $table->string('nama_pegawai', 150)->nullable();
+            $table->string('dokter_penanggung_jawab', 100)->nullable();
             $table->integer('umur_tahun')->unsgined()->nullable();
             $table->integer('umur_bulan')->unsigned()->nullable();
             $table->integer('umur_hari')->unsigned()->nullable();
@@ -34,7 +38,6 @@ return new class extends Migration
             $table->string('unit_asal_nama', 30)->nullable()->index();
             $table->string('penjamin_kode', 4)->nullable()->index();
             $table->string('penjamin_nama', 100)->nullable()->index();
-            $table->string('pegawai', 100)->nullable()->index();
 
             $table->primary('no_laboratorium');
         });
