@@ -149,7 +149,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                                 'menejemen'              => $t->menejemen,
                                 'biaya'                  => $t->total_byr,
                                 'kd_dokter'              => $this->dokterPj,
-                                'status'                 => str($this->statusRawat)->title()->value(),
+                                'status'                 => str($this->statusRawat)->title(),
                                 'kategori'               => 'PK'
                             ]);
 
