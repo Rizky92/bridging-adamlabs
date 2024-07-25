@@ -149,7 +149,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                                 'menejemen'              => $t->menejemen,
                                 'biaya'                  => $t->total_byr,
                                 'kd_dokter'              => $this->dokterPj,
-                                'status'                 => str($this->statusRawat)->title(),
+                                'status'                 => str($this->statusRawat)->title()->value(),
                                 'kategori'               => 'PK'
                             ]);
 
@@ -354,7 +354,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
         if ($detailJurnal->isNotEmpty()) {
             Jurnal::catat(
                 $this->noRawat,
-                sprintf('PEMERIKSAAN LABORAT RAWAT %s, DIPOSTING OLEH %s', str()->title($this->statusRawat)->value(), $this->nip),
+                sprintf('PEMERIKSAAN LABORAT RAWAT %s, DIPOSTING OLEH %s', str()->title($this->statusRawat), $this->nip),
                 'now',
                 $detailJurnal->all()        
             );

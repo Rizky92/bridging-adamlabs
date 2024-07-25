@@ -4,12 +4,10 @@ namespace App\Jobs;
 
 use App\Models\Pemeriksaan;
 use App\Models\Registrasi;
-use App\Models\SIMRS\HasilPeriksaLab;
 use App\Models\SIMRS\HasilPeriksaLabDetail;
 use App\Models\SIMRS\Jurnal;
 use App\Models\SIMRS\PemeriksaanLab;
 use App\Models\SIMRS\PermintaanLabPK;
-use App\Models\SIMRS\TindakanLab;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -79,6 +77,14 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
     public function handle()
     {
         $this->simpanHasilLab();
+    }
+    
+    private function cariUser(): void
+    {
+        $this->nip = DB::connection('mysql_sik')->table('mapping_user_bridginglab')
+            ->where('vendor', 'adamlabs')
+            ->where('username', $this->username)
+            ->value('nip');
     }
 
     private function simpanHasilLab(): void
@@ -272,7 +278,7 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
         if ($detailJurnal->isNotEmpty()) {
             Jurnal::catat(
                 $this->noRawat,
-                sprintf('PEMERIKSAAN LABORAT RAWAT %s, DIPOSTING OLEH %s', str()->upper($this->statusRawat), 'SERVICE LIS'),
+                sprintf('PEMERIKSAAN LABORAT RAWAT %s, DIPOSTING OLEH %s', str()->title($this->statusRawat), $this->nip),
                 'now',
                 $detailJurnal->all()
             );
