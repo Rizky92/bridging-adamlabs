@@ -215,16 +215,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                             }
                         });
 
-                    KesanSaran::create([
-                        'no_rawat'    => $this->noRawat,
-                        'tgl_periksa' => $this->tgl,
-                        'jam'         => $this->jam,
-                        'saran'       => '',
-                        'kesan'       => str($registrasi->keterangan_hasil)
-                            ->replace(['<br>', '<br />', '<br/>'], "\n")
-                            ->stripTags()
-                            ->value(),
-                    ]);
+                    $this->isiCatatanPemeriksaan($registrasi);
 
                     $this->catatJurnal();
                 });
@@ -247,6 +238,30 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
             }
 
             throw $e;
+        }
+    }
+
+    private function isiCatatanPemeriksaan(Registrasi $registrasi): void
+    {
+        if (! KesanSaran::query()
+            ->where('no_rawat', $this->noRawat)
+            ->where('tgl_periksa', $this->tgl)
+            ->where('jam', $this->jam)
+            ->exists()
+        ) {
+            KesanSaran::create([
+                'no_rawat'    => $this->noRawat,
+                'tgl_periksa' => $this->tgl,
+                'jam'         => $this->jam,
+                'saran'       => '',
+                'kesan'       => $registrasi->keterangan_hasil,
+            ]);
+        } else {
+            KesanSaran::query()
+                ->where('no_rawat', $this->noRawat)
+                ->where('tgl_periksa', $this->tgl)
+                ->where('jam', $this->jam)
+                ->update(['kesan' => $registrasi->keterangan_hasil]);
         }
     }
 

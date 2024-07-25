@@ -6,6 +6,7 @@ use App\Models\Pemeriksaan;
 use App\Models\Registrasi;
 use App\Models\SIMRS\HasilPeriksaLabDetail;
 use App\Models\SIMRS\Jurnal;
+use App\Models\SIMRS\KesanSaran;
 use App\Models\SIMRS\PemeriksaanLab;
 use App\Models\SIMRS\PermintaanLabPK;
 use Illuminate\Bus\Queueable;
@@ -161,6 +162,9 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
                             $this->totalPendapatan       += $p->pemeriksaan_pendapatan;
                         }
                     });
+
+                $this->isiCatatanPemeriksaan($registrasi);
+
                 $this->catatJurnal();
             });
         } catch (Throwable $e) {
@@ -171,6 +175,30 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
                 ->delete();
 
             throw $e;
+        }
+    }
+
+    private function isiCatatanPemeriksaan(Registrasi $registrasi): void
+    {
+        if (! KesanSaran::query()
+            ->where('no_rawat', $this->noRawat)
+            ->where('tgl_periksa', $this->tgl)
+            ->where('jam', $this->jam)
+            ->exists()
+        ) {
+            KesanSaran::create([
+                'no_rawat'    => $this->noRawat,
+                'tgl_periksa' => $this->tgl,
+                'jam'         => $this->jam,
+                'saran'       => '',
+                'kesan'       => $registrasi->keterangan_hasil,
+            ]);
+        } else {
+            KesanSaran::query()
+                ->where('no_rawat', $this->noRawat)
+                ->where('tgl_periksa', $this->tgl)
+                ->where('jam', $this->jam)
+                ->update(['kesan' => $registrasi->keterangan_hasil]);
         }
     }
 
