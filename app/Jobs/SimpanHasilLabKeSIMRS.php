@@ -86,7 +86,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
 
     private function cariUser(): void
     {
-        $this->nip = DB::connection('mysql_sik')->table('mapping_user_adamlabs')
+        $this->nip = DB::connection('mysql_sik')->table('mapping_user_bridginglab')
             ->where('vendor', 'adamlabs')
             ->where('username', $this->username)
             ->value('nip');
