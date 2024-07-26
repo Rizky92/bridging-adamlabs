@@ -2,11 +2,13 @@
 
 namespace App\Models\SIMRS;
 
+use App\Exceptions\InequalJournalException;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 class Jurnal extends Model
 {
@@ -86,9 +88,18 @@ class Jurnal extends Model
 
         $detail = collect($detail);
 
+        $detail = collect($detail)
+            ->each(function (array $d) {
+                if ($d['debet'] < 0 || $d['kredit'] < 0) {
+                    throw new RuntimeException('Proses penjurnalan tidak boleh memiliki transaksi < 0');
+                }
+            });
+
         [$debet, $kredit] = [round($detail->sum('debet'), 2), round($detail->sum('kredit'), 2)];
 
-        throw_if($debet !== $kredit, 'App\Exceptions\InequalJournalException', $debet, $kredit, $noJurnal);
+        if ($debet !== $kredit) {
+            throw new InequalJournalException($debet, $kredit, $noJurnal);
+        }
 
         $jurnal = static::create([
             'no_jurnal'  => $noJurnal,

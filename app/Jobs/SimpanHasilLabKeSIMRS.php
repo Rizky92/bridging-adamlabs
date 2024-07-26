@@ -268,6 +268,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
     private function catatJurnal(): void
     {
         $akunLaborat = null;
+        $statusRawat = null;
 
         if ($this->statusRawat === 'ranap') {
             $akunLaborat = DB::connection('mysql_sik')
@@ -291,6 +292,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                     'Utang_Jasa_Menejemen_Laborat_Ranap as utang_jasa_manajemen',
                 ])
                 ->first();
+            $statusRawat = 'RAWAT INAP';
         } else {
             $akunLaborat = DB::connection('mysql_sik')
                 ->table('set_akun_ralan')
@@ -313,6 +315,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                     'Utang_Jasa_Menejemen_Laborat_Ralan as utang_jasa_manajemen',
                 ])
                 ->first();
+            $statusRawat = 'RAWAT JALAN';
         }
 
         if (! $akunLaborat) {
