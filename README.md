@@ -1,5 +1,5 @@
 # Webservice Bridging ADAMLABS
-Webservice Bridging ADAMLABS digunakan untuk menerima kiriman hasil pemeriksaan lab dari LIS ADAMLABS. Webservice tersedia sebagai Rest API berdasarkan [Dokumentasi Bridging ADAMLABS](https://adamlabs.id/docs-bridging-adamlabs#table_of_content_heading_1735033496270_8).  
+Webservice Bridging ADAMLABS digunakan untuk menerima kiriman hasil pemeriksaan lab dari LIS ADAMLABS ke SIMRS Khanza. Webservice tersedia sebagai Rest API berdasarkan [Dokumentasi Bridging ADAMLABS](https://adamlabs.id/docs-bridging-adamlabs#table_of_content_heading_1735033496270_8).  
 
 Untuk integrasi ADAMLABS tambahan dari sisi SIMRS (kirim order lab, mapping pemeriksaan) bisa dilihat pada pull request [disini](https://github.com/rizky92/SIMRS-Khanza/pull/113/files).
 
