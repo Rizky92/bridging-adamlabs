@@ -43,10 +43,11 @@ Tersedia dua route untuk menerima hasil kiriman LIS ke SIMRS.
 Route ini digunakan untuk menerima hasil pemeriksaan lab baru dari LIS ke SIMRS. Pada route ini, proses pengembalian bisa secara full atau parsial. Untuk pengembalian parsial akan melihat status pemeriksaan di SIMRS dan flag `status_bridging = true` dari request yang dikirim dari LIS.
 
 ### `{APP_URL}/api/adam-lis/bridging/update-hasil`
-Route ini digunakan untuk mengupdate hasil pemeriksaan lab yang sebelumnya sudah pernah dirkirim ke SIMRS. Pada route ini, hanya pemeriksaan yang sudah ada saja di SIMRS atau dengan flag `status_bridging = true` dari request yang dikirim ke LIS.
+Route ini digunakan untuk mengupdate hasil pemeriksaan lab yang sebelumnya sudah pernah dirkirim ke SIMRS. Pada route ini, hanya pemeriksaan yang sudah ada di SIMRS atau dengan flag `status_bridging = true` dari request yang dikirim ke LIS.
 
 ### Modul Keuangan
 Setiap pengembalian hasil akan melakukan proses perhitungan keuangan yang kemudian akan dicatat sebagai transaksi jurnal di SIMRS. Apabila penggunaan keuangan telah terintegrasi ke SIMRS, maka **SANGAT DISARANKAN** untuk melakukan uji coba dahulu.  
 
 ### TODO:
 - [ ] Mengupdate waktu hasil agar menggunakan waktu terbaru dari hasil pengembalian LIS.
+- [ ] Update validasi
