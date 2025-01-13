@@ -10,8 +10,8 @@ Untuk integrasi ADAMLABS tambahan dari sisi SIMRS (kirim order lab, mapping peme
 ## Instalasi
 Git clone repo dan masuk ke directory.
 ```bash
-git clone https://github.com/rizky92/khanza-bridging-adamlabs.git --depth=1 khanza-bridging-adamlabs \
-    && cd khanza-bridging-adamlabs
+git clone https://github.com/rizky92/api-bridging-adamlabs.git --depth=1 api-bridging-adamlabs \
+    && cd api-bridging-adamlabs
 ```
 
 Kemudian install dependency menggunakan composer, lalu copy file `.env.example` menjadi `.env` di directory yang sama.
