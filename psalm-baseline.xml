@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="4.30.0@d0bc6e25d89f649e4f36a534f330f8bb4643dd69">
+  <file src="app/Http/Requests/API/SimpanHasilLabRequest.php">
+    <DuplicateArrayKey occurrences="2">
+      <code>'nama_pegawai'                                         =&gt; ['sometimes', 'nullable', 'string']</code>
+      <code>'username'                                             =&gt; ['sometimes', 'nullable', 'string']</code>
+    </DuplicateArrayKey>
+  </file>
+  <file src="app/Http/Requests/API/UpdateHasilLabRequest.php">
+    <DuplicateArrayKey occurrences="2">
+      <code>'nama_pegawai'                                         =&gt; ['sometimes', 'nullable', 'string']</code>
+      <code>'username'                                             =&gt; ['sometimes', 'nullable', 'string']</code>
+    </DuplicateArrayKey>
+  </file>
+  <file src="app/Jobs/SimpanHasilLabKeSIMRS.php">
+    <UndefinedDocblockClass occurrences="1"/>
+  </file>
+  <file src="app/Jobs/UpdateHasilLabKeSIMRS.php">
+    <UndefinedDocblockClass occurrences="1"/>
+  </file>
+  <file src="app/Models/SIMRS/PemeriksaanLab.php">
+    <InvalidTemplateParam occurrences="3">
+      <code>Collection&lt;array-key, string&gt;|array&lt;array-key, string&gt;</code>
+      <code>Collection&lt;array-key, string&gt;|array&lt;array-key, string&gt;</code>
+      <code>Collection&lt;array-key, string&gt;|array&lt;array-key, string&gt;</code>
+    </InvalidTemplateParam>
+    <TooManyTemplateParams occurrences="3">
+      <code>Collection&lt;array-key, string&gt;|array&lt;array-key, string&gt;</code>
+      <code>Collection&lt;array-key, string&gt;|array&lt;array-key, string&gt;</code>
+      <code>Collection&lt;array-key, string&gt;|array&lt;array-key, string&gt;</code>
+    </TooManyTemplateParams>
+  </file>
+  <file src="app/Providers/AppServiceProvider.php">
+    <UndefinedThisPropertyFetch occurrences="4">
+      <code>$this-&gt;value</code>
+      <code>$this-&gt;value</code>
+      <code>$this-&gt;value</code>
+      <code>$this-&gt;value</code>
+    </UndefinedThisPropertyFetch>
+  </file>
+  <file src="app/Support/helpers.php">
+    <UndefinedInterfaceMethod occurrences="8">
+      <code>disableQueryLog</code>
+      <code>disableQueryLog</code>
+      <code>disableQueryLog</code>
+      <code>enableQueryLog</code>
+      <code>flushQueryLog</code>
+      <code>flushQueryLog</code>
+      <code>getQueryLog</code>
+      <code>logging</code>
+    </UndefinedInterfaceMethod>
+  </file>
+</files>

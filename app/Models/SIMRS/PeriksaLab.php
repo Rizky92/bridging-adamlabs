@@ -2,9 +2,8 @@
 
 namespace App\Models\SIMRS;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Reedware\LaravelCompositeRelations\CompositeBelongsTo;
-use Reedware\LaravelCompositeRelations\CompositeHasMany;
 use Reedware\LaravelCompositeRelations\CompositeHasOne;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 
@@ -44,7 +43,10 @@ class PeriksaLab extends Model
         'kategori',
     ];
 
-    public function permintaan(): CompositeBelongsTo
+    /**
+     * @psalm-return Builder<Model>
+     */
+    public function permintaan(): Builder
     {
         return $this
             ->compositeBelongsTo(
@@ -64,7 +66,10 @@ class PeriksaLab extends Model
         );
     }
 
-    public function detail(): CompositeHasMany
+    /**
+     * @psalm-return Builder<Model>
+     */
+    public function detail(): Builder
     {
         return $this
             ->compositeHasMany(

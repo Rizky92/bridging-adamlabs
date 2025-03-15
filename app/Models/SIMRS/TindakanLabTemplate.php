@@ -84,7 +84,7 @@ class TindakanLabTemplate extends Model
             )
             ->groupBy("$adamlabs.pemeriksaan.id");
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             ? as no_rawat,
             template_laboratorium.kd_jenis_prw,
             ? as tgl_periksa,
@@ -105,8 +105,7 @@ class TindakanLabTemplate extends Model
 
         return $query
             ->selectRaw($sqlSelect, [$noRawat, $tanggal, $jam])
-            ->leftJoinSub($hasilAdamlabs, 'hasil_adamlabs', fn (JoinClause $join) =>
-                $join->on('template_laboratorium.id_template', '=', 'hasil_adamlabs.id_template')
+            ->leftJoinSub($hasilAdamlabs, 'hasil_adamlabs', fn (JoinClause $join) => $join->on('template_laboratorium.id_template', '=', 'hasil_adamlabs.id_template')
             )
             ->where('template_laboratorium.kd_jenis_prw', $kodeTindakan)
             ->orderBy('template_laboratorium.urut');

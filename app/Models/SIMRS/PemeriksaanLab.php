@@ -4,6 +4,7 @@ namespace App\Models\SIMRS;
 
 use App\Models\Pemeriksaan;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -77,9 +78,9 @@ class PemeriksaanLab extends Model
     }
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Collection<array-key, string>|array<array-key, string>  $kategori
-     * @param  \Illuminate\Database\Eloquent\Collection<array-key, string>|array<array-key, string>  $tindakan
-     * @param  \Illuminate\Database\Eloquent\Collection<array-key, string>|array<array-key, string>  $compound
+     * @param  Collection<array-key, string>|array<array-key, string>  $kategori
+     * @param  Collection<array-key, string>|array<array-key, string>  $tindakan
+     * @param  Collection<array-key, string>|array<array-key, string>  $compound
      */
     public function scopeUntukHasilPemeriksaan(Builder $query, $kategori, $tindakan, $compound): Builder
     {

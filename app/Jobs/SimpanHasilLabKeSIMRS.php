@@ -4,11 +4,11 @@ namespace App\Jobs;
 
 use App\Models\Pemeriksaan;
 use App\Models\Registrasi;
-use App\Models\SIMRS\PeriksaLab;
-use App\Models\SIMRS\PeriksaLabDetail;
 use App\Models\SIMRS\Jurnal;
 use App\Models\SIMRS\KesanSaran;
 use App\Models\SIMRS\PemeriksaanLab;
+use App\Models\SIMRS\PeriksaLab;
+use App\Models\SIMRS\PeriksaLabDetail;
 use App\Models\SIMRS\PermintaanLabPK;
 use App\Models\SIMRS\TindakanLab;
 use Illuminate\Bus\Queueable;
@@ -21,7 +21,10 @@ use Throwable;
 
 class SimpanHasilLabKeSIMRS implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     private string $noLaboratorium;
 
@@ -78,9 +81,9 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle()
+    public function handle(): void
     {
-	    $this->cariUser();
+        $this->cariUser();
         $this->simpanHasilLab();
     }
 
@@ -155,18 +158,18 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                                 'biaya'                  => $t->total_byr,
                                 'kd_dokter'              => $this->dokterPj,
                                 'status'                 => str($this->statusRawat)->title()->value(),
-                                'kategori'               => 'PK'
+                                'kategori'               => 'PK',
                             ]);
                             tracker_end('mysql_sik', $this->username);
 
-                            $this->totalJasaSarana       += $t->bagian_rs;
-                            $this->totalBHP              += $t->bhp;
-                            $this->totalJasaPerujuk      += $t->tarif_perujuk;
-                            $this->totalJasaMedisDokter  += $t->tarif_tindakan_dokter;
+                            $this->totalJasaSarana += $t->bagian_rs;
+                            $this->totalBHP += $t->bhp;
+                            $this->totalJasaPerujuk += $t->tarif_perujuk;
+                            $this->totalJasaMedisDokter += $t->tarif_tindakan_dokter;
                             $this->totalJasaMedisPetugas += $t->tarif_tindakan_petugas;
-                            $this->totalKSO              += $t->kso;
-                            $this->totalManajemen        += $t->menejemen;
-                            $this->totalPendapatan       += $t->total_byr;
+                            $this->totalKSO += $t->kso;
+                            $this->totalManajemen += $t->menejemen;
+                            $this->totalPendapatan += $t->total_byr;
                         });
 
                     PemeriksaanLab::query()
@@ -214,14 +217,14 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                                 ]);
                                 tracker_end('mysql_sik', $this->username);
 
-                                $this->totalJasaSarana       += $p->pemeriksaan_jasa_sarana;
-                                $this->totalBHP              += $p->pemeriksaan_bhp;
-                                $this->totalJasaPerujuk      += $p->pemeriksaan_jasa_perujuk;
-                                $this->totalJasaMedisDokter  += $p->pemeriksaan_jasa_medis_dokter;
+                                $this->totalJasaSarana += $p->pemeriksaan_jasa_sarana;
+                                $this->totalBHP += $p->pemeriksaan_bhp;
+                                $this->totalJasaPerujuk += $p->pemeriksaan_jasa_perujuk;
+                                $this->totalJasaMedisDokter += $p->pemeriksaan_jasa_medis_dokter;
                                 $this->totalJasaMedisPetugas += $p->pemeriksaan_jasa_medis_petugas;
-                                $this->totalKSO              += $p->pemeriksaan_kso;
-                                $this->totalManajemen        += $p->pemeriksaan_manajemen;
-                                $this->totalPendapatan       += $p->pemeriksaan_pendapatan;
+                                $this->totalKSO += $p->pemeriksaan_kso;
+                                $this->totalManajemen += $p->pemeriksaan_manajemen;
+                                $this->totalPendapatan += $p->pemeriksaan_pendapatan;
                             }
                         });
 
@@ -382,8 +385,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
             $detailJurnal->push(['kd_rek' => $akunLaborat->utang_manajemen, 'debet' => 0, 'kredit' => $this->totalManajemen]);
         }
 
-        $detailJurnal = $detailJurnal->reject(fn (array $value): bool =>
-            isset($value['kd_rek'], $value['debet'], $value['kredit']) &&
+        $detailJurnal = $detailJurnal->reject(fn (array $value): bool => isset($value['kd_rek'], $value['debet'], $value['kredit']) &&
             (round($value['debet'], 2) === 0.00 && round($value['kredit'], 2) === 0.00)
         );
 

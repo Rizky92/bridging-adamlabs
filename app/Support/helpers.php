@@ -1,7 +1,10 @@
 <?php
 
+namespace App\Support;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
 
 if (! function_exists('tracker_start')) {
     function tracker_start(string $connection = 'mysql'): void
@@ -63,16 +66,20 @@ if (! function_exists('str')) {
     /**
      * @template  T of string|null
      *
-     * @param  \T  $value
-     * @return \Illuminate\Support\Stringable|string|mixed
+     * @param  T  $value
+     * @return Stringable|string|mixed
      *
-     * @psalm-return (T is null ? object : \Illuminate\Support\Stringable)
+     * @psalm-return (T is null ? object : Stringable)
      */
     function str($value = null)
     {
         if (func_num_args() === 0) {
             return new class
             {
+                /**
+                 * @param  string  $method
+                 * @param  mixed  $parameters
+                 */
                 public function __call($method, $parameters)
                 {
                     return Str::$method(...$parameters);
@@ -85,6 +92,6 @@ if (! function_exists('str')) {
             };
         }
 
-        return Str::of($value);
+        return Str::of((string) $value);
     }
 }

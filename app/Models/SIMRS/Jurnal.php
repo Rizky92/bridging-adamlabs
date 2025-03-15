@@ -3,10 +3,9 @@
 namespace App\Models\SIMRS;
 
 use App\Exceptions\InequalJournalException;
-use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use RuntimeException;
 

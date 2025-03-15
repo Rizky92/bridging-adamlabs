@@ -2,8 +2,8 @@
 
 namespace App\Models\SIMRS;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Reedware\LaravelCompositeRelations\CompositeBelongsTo;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 
 class PeriksaLabDetail extends Model
@@ -41,7 +41,10 @@ class PeriksaLabDetail extends Model
         'biaya_item',
     ];
 
-    public function parent(): CompositeBelongsTo
+    /**
+     * @psalm-return Builder<Model>
+     */
+    public function parent(): Builder
     {
         return $this
             ->compositeBelongsTo(
