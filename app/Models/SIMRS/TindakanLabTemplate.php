@@ -43,7 +43,7 @@ class TindakanLabTemplate extends Model
      * @param  non-empty-string  $tanggal
      * @param  non-empty-string  $jam
      */
-    public function scopeIsiHasilPeriksaLabDetail(
+    public function scopeIsiPeriksaLabDetail(
         Builder $query,
         string $noRawat,
         string $tanggal,
@@ -105,7 +105,7 @@ class TindakanLabTemplate extends Model
 
         return $query
             ->selectRaw($sqlSelect, [$noRawat, $tanggal, $jam])
-            ->leftJoinSub($hasilAdamlabs, 'hasil_adamlabs', fn (JoinClause $join) => 
+            ->leftJoinSub($hasilAdamlabs, 'hasil_adamlabs', fn (JoinClause $join) =>
                 $join->on('template_laboratorium.id_template', '=', 'hasil_adamlabs.id_template')
             )
             ->where('template_laboratorium.kd_jenis_prw', $kodeTindakan)

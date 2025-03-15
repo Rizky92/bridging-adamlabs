@@ -5,27 +5,32 @@
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "require": {
-        "php": "^7.3|^8.0",
+        "php": "^7.4",
         "fruitcake/laravel-cors": "^2.2",
         "guzzlehttp/guzzle": "^7.9.2",
         "laravel/framework": "^8.83.29",
-        "laravel/tinker": "^2.10",
+        "laravel/tinker": "^2.10.1",
         "reedware/laravel-composite-relations": "^3.0.1",
         "rizky92/carbon-helper": "^0.0.4"
     },
     "require-dev": {
-        "doctrine/dbal": "^3.9.3",
+        "barryvdh/laravel-debugbar": "^3.7",
+        "barryvdh/laravel-ide-helper": "^2.14",
+        "doctrine/dbal": "^3.9.4",
         "facade/ignition": "^2.17.7",
         "fakerphp/faker": "^1.24.1",
+        "friendsofphp/php-cs-fixer": "^3.72",
         "mockery/mockery": "^1.6.12",
-        "nunomaduro/collision": "^5.11"
+        "nunomaduro/collision": "^5.11",
+        "psalm/plugin-laravel": "^1.6",
+        "vimeo/psalm": "^4.30"
     },
     "autoload": {
         "psr-4": {
             "App\\": "app/"
         },
         "files": [
-            "app/helpers.php"
+            "app/Support/helpers.php"
         ]
     },
     "scripts": {
@@ -41,6 +46,45 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
+        ],
+        "ide-helper": [
+            "@php artisan ide-helper:generate",
+            "@php artisan ide-helper:models --nowrite",
+            "@php artisan ide-helper:meta"
+        ],
+        "psalm:scan": [
+            "@php vendor/bin/psalm"
+        ],
+        "psalm:update-baseline": [
+            "@php vendor/bin/psalm --update-baseline"
+        ],
+        "psalm:clear-cache": [
+            "@php vendor/bin/psalm --clear-cache"
+        ],
+        "psalm:alter": [
+            "@php vendor/bin/psalm --alter --issues=MissingParamType,MissingReturnType,MissingClosureReturnType,InvalidReturnType,InvalidNullableReturnType,InvalidFalsableReturnType,MismatchingDocblockParamType,MismatchingDocblockReturnType,ParamNameMismatch,PossiblyUndefinedVariable,PossiblyUndefinedGlobalVariable,UnnecessaryVarAnnotation --allow-backwards-incompatible-changes=true"
+        ],
+        "cs": [
+            "@php vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php",
+            "npm run pb"
+        ],
+        "lint": [
+            "@ide-helper",
+            "@psalm:clear-cache",
+            "@psalm:alter",
+            "@cs"
+        ],
+        "optimize": [
+            "@php artisan optimize -q",
+            "@php artisan view:cache -q",
+            "@php artisan livewire:discover -q",
+            "@php artisan settings:discover -q"
+        ],
+        "optimize:clear": [
+            "@php artisan optimize:clear",
+            "@php artisan livewire:discover",
+            "@php artisan settings:clear-cache",
+            "@php artisan settings:clear-discover"
         ]
     },
     "extra": {

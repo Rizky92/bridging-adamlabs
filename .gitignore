@@ -1,15 +1,33 @@
+# Konfigurasi IDE
+/.idea
+/.vscode/**
+!/.vscode/extensions.json
+!/.vscode/settings.json
+
+# Nggak perlu masuk ke repo
 /node_modules
 /public/hot
 /public/storage
 /storage/*.key
 /vendor
-.env
-.env.backup
+
+# Generated files
+_ide_helper_models.php
+_ide_helper.php
+.php-cs-fixer.cache
+.phpstorm.meta.php
 .phpunit.result.cache
+npm-debug.log
+yarn-error.log
+
+# File lokal
+.env
+.env.*
+!.env.example
 docker-compose.override.yml
 Homestead.json
 Homestead.yaml
-npm-debug.log
-yarn-error.log
-/.idea
-/.vscode
+*.bat
+*.rnd
+*.sh
+*.txt
