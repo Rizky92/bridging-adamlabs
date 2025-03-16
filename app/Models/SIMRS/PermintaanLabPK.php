@@ -2,8 +2,8 @@
 
 namespace App\Models\SIMRS;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Reedware\LaravelCompositeRelations\CompositeHasMany;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 
 class PermintaanLabPK extends Model
@@ -22,10 +22,7 @@ class PermintaanLabPK extends Model
 
     public $timestamps = false;
 
-    /**
-     * @psalm-return Builder<Model>
-     */
-    public function hasil(): Builder
+    public function hasil(): CompositeHasMany
     {
         return $this
             ->compositeHasMany(
