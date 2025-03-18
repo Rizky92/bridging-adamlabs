@@ -13,8 +13,13 @@ class SimpanHasilLabController
 {
     public function __invoke(SimpanHasilLabRequest $request): JsonResponse
     {
+        try {
+            \Illuminate\Support\Facades\Log::info('request masuk', ['request' => $request]);
+        } catch (\Exception $e) {}
+
         $data = $request->validated();
 
+        tracker_start('mysql');
         Registrasi::firstOrCreate(
             ['no_registrasi'   => Arr::get($data, 'no_registrasi'), 'no_laboratorium' => Arr::get($data, 'no_laboratorium')],
             [
@@ -84,6 +89,7 @@ class SimpanHasilLabController
                 ]);
             }
         }
+        tracker_end('mysql', $data['username']);
 
         SimpanHasilLabKeSIMRS::dispatch([
             'no_laboratorium' => $data['no_laboratorium'],

@@ -13,14 +13,20 @@ class UpdateHasilLabController
 {
     public function __invoke(UpdateHasilLabRequest $request): JsonResponse
     {
+        try {
+            \Illuminate\Support\Facades\Log::info('request for update masuk', ['request' => $request]);
+        } catch (\Exception $e) {}
         $data = $request->validated();
 
-        Registrasi::query()
-            ->where('no_laboratorium', $data['no_laboratorium'])
-            ->where('no_registrasi', $data['no_registrasi'])
-            ->update([
-                'keterangan_hasil' => $data['keterangan_hasil'],
-            ]);
+        tracker_start('mysql');
+        if (isset($data['keterangan_hasil'])) {
+            Registrasi::query()
+                ->where('no_laboratorium', $data['no_laboratorium'])
+                ->where('no_registrasi', $data['no_registrasi'])
+                ->update([
+                    'keterangan_hasil' => $data['keterangan_hasil'],
+                ]);
+        }
 
         foreach ($data['pemeriksaan'] as $pemeriksaan) {
             Pemeriksaan::query()
@@ -35,10 +41,12 @@ class UpdateHasilLabController
                     'hasil_flag_kode'   => Arr::get($pemeriksaan, 'hasil.flag_kode'),
                 ]);
         }
+        tracker_end('mysql', $data['username']);
 
         UpdateHasilLabKeSIMRS::dispatch([
             'no_laboratorium' => $data['no_laboratorium'],
             'no_registrasi'   => $data['no_registrasi'],
+            'username'        => $data['username'],
         ]);
 
         return response()->json([

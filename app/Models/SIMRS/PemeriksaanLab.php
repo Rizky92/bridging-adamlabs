@@ -88,7 +88,7 @@ class PemeriksaanLab extends Model
             ->whereIn('pemeriksaan_labpk.kategori', $kategori)
             ->whereIn('template_laboratorium.kd_jenis_prw', $tindakan)
             ->whereIn('pemeriksaan_labpk.kode_compound', $compound)
-            ->orderBy('pemeriksaan_labpk_kategori.urut')
-            ->orderBy('pemeriksaan_labpk.urut');
+            ->orderBy('template_laboratorium.kd_jenis_prw')
+            ->orderBy('mapping_pemeriksaan_labpk.id_template');
     }
 }
