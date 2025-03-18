@@ -120,6 +120,10 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
             $compound = $registrasi->pemeriksaan->pluck('compound')->filter()->unique()->values();
 
             DB::connection('mysql_sik')->transaction(function () use ($registrasi, $kategori, $tindakan, $compound) {
+                if ($this->registrasiDitutup()) {
+                    throw new RegistrationClosedException('Registrasi sudah ditutup!');
+                }
+                
                 PemeriksaanLab::query()
                     ->untukHasilPemeriksaan($kategori, $tindakan, $compound)
                     ->get()
@@ -335,5 +339,13 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
             );
             tracker_end('mysql_sik', $this->username);
         }
+    }
+
+    private function registrasiDitutup(): bool
+    {
+        return DB::connection('mysql_sik')
+            ->table('reg_periksa')
+            ->where('no_rawat', $this->noRawat)
+            ->value('status_bayar') === 'Sudah Bayar';
     }
 }

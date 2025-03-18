@@ -124,6 +124,10 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
 
             DB::connection('mysql_sik')
                 ->transaction(function () use ($registrasi, $kategori, $tindakan, $tindakanSudahAda, $compound) {
+                    if ($this->registrasiDitutup()) {
+                        throw new RegistrationClosedException('Registrasi sudah ditutup!');
+                    }
+
                     tracker_start('mysql_sik');
                     PermintaanLabPK::query()
                         ->where('noorder', $this->noRegistrasi)
@@ -393,9 +397,17 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                 $this->noRawat,
                 sprintf('PEMERIKSAAN LABORAT RAWAT %s, DIPOSTING OLEH %s', $statusRawat, $this->nip),
                 'now',
-                $detailJurnal->all()        
+                $detailJurnal->all()
             );
             tracker_end('mysql_sik', $this->username);
         }
+    }
+
+    private function registrasiDitutup(): bool
+    {
+        return DB::connection('mysql_sik')
+            ->table('reg_periksa')
+            ->where('no_rawat', $this->noRawat)
+            ->value('status_bayar') === 'Sudah Bayar';
     }
 }
