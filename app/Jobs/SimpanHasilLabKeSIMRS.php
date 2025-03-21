@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Exceptions\RegistrationClosedException;
 use App\Models\Pemeriksaan;
 use App\Models\Registrasi;
 use App\Models\SIMRS\Jurnal;
@@ -127,6 +128,10 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
 
             DB::connection('mysql_sik')
                 ->transaction(function () use ($registrasi, $kategori, $tindakan, $tindakanSudahAda, $compound) {
+                    if ($this->registrasiDitutup()) {
+                        throw new RegistrationClosedException('Registrasi sudah ditutup!');
+                    }
+
                     tracker_start('mysql_sik');
                     PermintaanLabPK::query()
                         ->where('noorder', $this->noRegistrasi)
@@ -217,10 +222,10 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                                 ]);
                                 tracker_end('mysql_sik', $this->username);
 
-                                $this->totalJasaSarana += $p->pemeriksaan_jasa_sarana;
-                                $this->totalBHP += $p->pemeriksaan_bhp;
-                                $this->totalJasaPerujuk += $p->pemeriksaan_jasa_perujuk;
-                                $this->totalJasaMedisDokter += $p->pemeriksaan_jasa_medis_dokter;
+                                $this->totalJasaSarana       += $p->pemeriksaan_jasa_sarana;
+                                $this->totalBHP              += $p->pemeriksaan_bhp;
+                                $this->totalJasaPerujuk      += $p->pemeriksaan_jasa_perujuk;
+                                $this->totalJasaMedisDokter  += $p->pemeriksaan_jasa_medis_dokter;
                                 $this->totalJasaMedisPetugas += $p->pemeriksaan_jasa_medis_petugas;
                                 $this->totalKSO += $p->pemeriksaan_kso;
                                 $this->totalManajemen += $p->pemeriksaan_manajemen;
@@ -399,5 +404,16 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
             );
             tracker_end('mysql_sik', $this->username);
         }
+    }
+
+    private function registrasiDitutup(): bool
+    {
+        return DB::connection('mysql_sik')
+            ->table('reg_periksa')
+            ->where('no_rawat', $this->noRawat)
+            ->where(fn ($q) => $q
+                ->where('stts', 'Batal')
+                ->orWhere('status_bayar', 'Sudah Bayar'))
+            ->exists();
     }
 }

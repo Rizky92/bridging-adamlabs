@@ -13,7 +13,7 @@ class InequalJournalException extends RuntimeException
     public function __construct($debit, $credit, string $journalNo)
     {
         $message = str(collect(['journalNo' => $journalNo, 'debit' => $debit, 'credit' => $credit])->toJson())
-            ->prepend('Debit and credit must be equal. ')
+            ->prepend('Debet dan Kredit harus sama! ')
             ->value();
 
         parent::__construct($message);
