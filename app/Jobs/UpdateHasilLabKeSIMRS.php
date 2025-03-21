@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Exceptions\RegistrationClosedException;
 use App\Models\Pemeriksaan;
 use App\Models\Registrasi;
 use App\Models\SIMRS\HasilPeriksaLabDetail;
@@ -123,7 +124,7 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
                 if ($this->registrasiDitutup()) {
                     throw new RegistrationClosedException('Registrasi sudah ditutup!');
                 }
-                
+
                 PemeriksaanLab::query()
                     ->untukHasilPemeriksaan($kategori, $tindakan, $compound)
                     ->get()
@@ -335,7 +336,7 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
                 $this->noRawat,
                 sprintf('PEMERIKSAAN LABORAT RAWAT %s, DIPOSTING OLEH %s', $statusRawat, $this->nip),
                 'now',
-                $detailJurnal->all()        
+                $detailJurnal->all()
             );
             tracker_end('mysql_sik', $this->username);
         }
@@ -346,6 +347,9 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
         return DB::connection('mysql_sik')
             ->table('reg_periksa')
             ->where('no_rawat', $this->noRawat)
-            ->value('status_bayar') === 'Sudah Bayar';
+            ->where(fn ($q) => $q
+                ->where('stts', 'Batal')
+                ->orWhere('status_bayar', 'Sudah Bayar'))
+            ->exists();
     }
 }

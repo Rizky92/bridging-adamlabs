@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Exceptions\RegistrationClosedException;
 use App\Models\Pemeriksaan;
 use App\Models\Registrasi;
 use App\Models\SIMRS\HasilPeriksaLab;
@@ -48,7 +49,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
     private float $totalJasaMedisPetugas = 0;
 
     private float $totalKSO = 0;
-    
+
     private float $totalPendapatan = 0;
 
     private float $totalBHP = 0;
@@ -61,7 +62,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
 
     /**
      * Create a new job instance.
-     * 
+     *
      * @param  array{
      *     no_laboratorium: string,
      *     no_registrasi: string
@@ -136,7 +137,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                             'jam_hasil' => $this->jam,
                         ]);
                     tracker_end('mysql_sik', $this->username);
-                    
+
                     TindakanLab::query()
                         ->whereIn('kd_jenis_prw', $tindakan->diff($tindakanSudahAda))
                         ->get()
@@ -172,7 +173,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                             $this->totalManajemen        += $t->menejemen;
                             $this->totalPendapatan       += $t->total_byr;
                         });
-                    
+
                     PemeriksaanLab::query()
                         ->untukHasilPemeriksaan($kategori, $tindakan, $compound)
                         ->get()
@@ -217,7 +218,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                                     'biaya_item'     => $p->pemeriksaan_pendapatan,
                                 ]);
                                 tracker_end('mysql_sik', $this->username);
-        
+
                                 $this->totalJasaSarana       += $p->pemeriksaan_jasa_sarana;
                                 $this->totalBHP              += $p->pemeriksaan_bhp;
                                 $this->totalJasaPerujuk      += $p->pemeriksaan_jasa_perujuk;
@@ -408,6 +409,9 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
         return DB::connection('mysql_sik')
             ->table('reg_periksa')
             ->where('no_rawat', $this->noRawat)
-            ->value('status_bayar') === 'Sudah Bayar';
+            ->where(fn ($q) => $q
+                ->where('stts', 'Batal')
+                ->orWhere('status_bayar', 'Sudah Bayar'))
+            ->exists();
     }
 }
