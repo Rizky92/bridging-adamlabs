@@ -54,24 +54,16 @@ if (! function_exists('tracker_end')) {
     }
 }
 
-if (! function_exists('tracker_dispose')) {
-    function tracker_dispose(string $connection): void
-    {
-        DB::connection($connection)->flushQueryLog();
-        DB::connection($connection)->disableQueryLog();
-    }
-}
-
 if (! function_exists('str')) {
     /**
-     * @template  T of string|null
+     * @template T of string|null
      *
      * @param  T  $value
      * @return Stringable|string|mixed
      *
-     * @psalm-return (T is null ? object : Stringable)
+     * @psalm-return (func_num_args() is 0 ? object : Stringable)
      */
-    function str($value = null)
+    function str()
     {
         if (func_num_args() === 0) {
             return new class
@@ -92,6 +84,6 @@ if (! function_exists('str')) {
             };
         }
 
-        return Str::of((string) $value);
+        return Str::of((string) func_get_arg(0));
     }
 }

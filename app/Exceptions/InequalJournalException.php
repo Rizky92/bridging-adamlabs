@@ -4,6 +4,8 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
+use function App\Support\str;
+
 class InequalJournalException extends RuntimeException
 {
     /**

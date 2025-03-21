@@ -18,6 +18,9 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
+use function App\Support\tracker_end;
+use function App\Support\tracker_start;
+
 class UpdateHasilLabKeSIMRS implements ShouldQueue
 {
     use Dispatchable;
@@ -64,11 +67,7 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param  array{
-     *     no_laboratorium: string,
-     *     no_registrasi: string
-     *     username: string
-     * }  $options
+     * @param  array{no_laboratorium: string, no_registrasi: string, username: string}  $params
      */
     public function __construct(array $options)
     {

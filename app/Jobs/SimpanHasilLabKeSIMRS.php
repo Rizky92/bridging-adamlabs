@@ -20,6 +20,9 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
+use function App\Support\tracker_end;
+use function App\Support\tracker_start;
+
 class SimpanHasilLabKeSIMRS implements ShouldQueue
 {
     use Dispatchable;
@@ -66,11 +69,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param  array{
-     *     no_laboratorium: string,
-     *     no_registrasi: string
-     *     user: string
-     * }  $params
+     * @param  array{no_laboratorium: string, no_registrasi: string, username: string}  $params
      */
     public function __construct(array $params)
     {
@@ -222,10 +221,10 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                                 ]);
                                 tracker_end('mysql_sik', $this->username);
 
-                                $this->totalJasaSarana       += $p->pemeriksaan_jasa_sarana;
-                                $this->totalBHP              += $p->pemeriksaan_bhp;
-                                $this->totalJasaPerujuk      += $p->pemeriksaan_jasa_perujuk;
-                                $this->totalJasaMedisDokter  += $p->pemeriksaan_jasa_medis_dokter;
+                                $this->totalJasaSarana += $p->pemeriksaan_jasa_sarana;
+                                $this->totalBHP += $p->pemeriksaan_bhp;
+                                $this->totalJasaPerujuk += $p->pemeriksaan_jasa_perujuk;
+                                $this->totalJasaMedisDokter += $p->pemeriksaan_jasa_medis_dokter;
                                 $this->totalJasaMedisPetugas += $p->pemeriksaan_jasa_medis_petugas;
                                 $this->totalKSO += $p->pemeriksaan_kso;
                                 $this->totalManajemen += $p->pemeriksaan_manajemen;
