@@ -76,15 +76,11 @@
         ],
         "optimize": [
             "@php artisan optimize -q",
-            "@php artisan view:cache -q",
-            "@php artisan livewire:discover -q",
-            "@php artisan settings:discover -q"
+            "@php artisan view:cache -q"
         ],
         "optimize:clear": [
             "@php artisan optimize:clear",
-            "@php artisan livewire:discover",
-            "@php artisan settings:clear-cache",
-            "@php artisan settings:clear-discover"
+            "@php artisan livewire:discover"
         ]
     },
     "extra": {
