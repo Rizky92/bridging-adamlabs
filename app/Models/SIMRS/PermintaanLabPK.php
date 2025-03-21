@@ -2,7 +2,6 @@
 
 namespace App\Models\SIMRS;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Reedware\LaravelCompositeRelations\CompositeHasMany;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
@@ -27,7 +26,7 @@ class PermintaanLabPK extends Model
     {
         return $this
             ->compositeHasMany(
-                HasilPeriksaLab::class,
+                PeriksaLab::class,
                 ['no_rawat', 'tgl_periksa', 'jam'],
                 ['no_rawat', 'tgl_hasil', 'jam_hasil'],
             )

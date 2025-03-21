@@ -8,14 +8,16 @@ use App\Models\Pemeriksaan;
 use App\Models\Registrasi;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 
 class SimpanHasilLabController
 {
     public function __invoke(SimpanHasilLabRequest $request): JsonResponse
     {
         try {
-            \Illuminate\Support\Facades\Log::info('request masuk', ['request' => $request]);
-        } catch (\Exception $e) {}
+            Log::info('request masuk', ['request' => $request]);
+        } catch (\Exception $e) {
+        }
 
         $data = $request->validated();
 

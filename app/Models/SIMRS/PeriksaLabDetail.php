@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Reedware\LaravelCompositeRelations\CompositeBelongsTo;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 
-class HasilPeriksaLabDetail extends Model
+class PeriksaLabDetail extends Model
 {
     use HasCompositeRelations;
 
@@ -45,7 +45,7 @@ class HasilPeriksaLabDetail extends Model
     {
         return $this
             ->compositeBelongsTo(
-                HasilPeriksaLab::class,
+                PeriksaLab::class,
                 ['no_rawat', 'kd_jenis_prw', 'tgl_periksa', 'jam'],
                 ['no_rawat', 'kd_jenis_prw', 'tgl_periksa', 'jam'],
             )

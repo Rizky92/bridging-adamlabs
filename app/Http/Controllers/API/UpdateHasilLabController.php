@@ -8,14 +8,16 @@ use App\Models\Pemeriksaan;
 use App\Models\Registrasi;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 
 class UpdateHasilLabController
 {
     public function __invoke(UpdateHasilLabRequest $request): JsonResponse
     {
         try {
-            \Illuminate\Support\Facades\Log::info('request for update masuk', ['request' => $request]);
-        } catch (\Exception $e) {}
+            Log::info('request for update masuk', ['request' => $request]);
+        } catch (\Exception $e) {
+        }
         $data = $request->validated();
 
         tracker_start('mysql');

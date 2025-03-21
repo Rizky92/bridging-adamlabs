@@ -8,7 +8,7 @@ use Reedware\LaravelCompositeRelations\CompositeHasMany;
 use Reedware\LaravelCompositeRelations\CompositeHasOne;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 
-class HasilPeriksaLab extends Model
+class PeriksaLab extends Model
 {
     use HasCompositeRelations;
 
@@ -68,7 +68,7 @@ class HasilPeriksaLab extends Model
     {
         return $this
             ->compositeHasMany(
-                HasilPeriksaLabDetail::class,
+                PeriksaLabDetail::class,
                 ['no_rawat', 'tgl_periksa', 'jam', 'kd_jenis_prw'],
                 ['no_rawat', 'tgl_periksa', 'jam', 'kd_jenis_prw'],
             )

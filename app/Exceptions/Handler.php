@@ -30,20 +30,18 @@ class Handler extends ExceptionHandler
 
     /**
      * Register the exception handling callbacks for the application.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->reportable(function (Throwable $e) {
             //
         });
 
         $this->renderable(function (Throwable $e, Request $request) {
-            if (!is_null($e) && $request->expectsJson()) {
+            if (! is_null($e) && $request->expectsJson()) {
                 return response()->json([
-                    'status' => false,
-                    'code' => 500,
+                    'status'  => false,
+                    'code'    => 500,
                     'message' => $e->getMessage(),
                 ], 500);
             }

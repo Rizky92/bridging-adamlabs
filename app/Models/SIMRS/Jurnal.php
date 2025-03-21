@@ -3,12 +3,13 @@
 namespace App\Models\SIMRS;
 
 use App\Exceptions\InequalJournalException;
-use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use RuntimeException;
+
+use function App\Support\str;
 
 class Jurnal extends Model
 {
@@ -69,9 +70,9 @@ class Jurnal extends Model
     }
 
     /**
-     * @param  "U"|"P"  $jenis
      * @param  Carbon|\DateTime|string  $waktuTransaksi
      * @param  array<array{kd_rek: string, debet: int|float, kredit: int|float}>  $detail
+     * @param  "U"|"P"  $jenis
      * @return static
      */
     public static function catat(string $noBukti, string $keterangan, $waktuTransaksi, array $detail, string $jenis = 'U'): ?self
