@@ -2,7 +2,6 @@
 
 namespace App\Models\SIMRS;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Reedware\LaravelCompositeRelations\CompositeHasMany;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
@@ -22,6 +21,11 @@ class PermintaanLabPK extends Model
     public $incrementing = false;
 
     public $timestamps = false;
+
+    protected $fillable = [
+        'tgl_hasil',
+        'jam_hasil',
+    ];
 
     public function hasil(): CompositeHasMany
     {
