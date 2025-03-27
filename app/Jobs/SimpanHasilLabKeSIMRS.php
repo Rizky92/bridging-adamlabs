@@ -115,10 +115,10 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
             $this->noRawat = $permintaanLab->no_rawat;
             $this->statusRawat = $permintaanLab->status;
 
-            $waktuRegistrasi = carbon_immutable($registrasi->pemeriksaan->max('waktu_pemeriksaan'));
-
             $this->tglSebelumnya = optional($permintaanLab->tgl_hasil) ?? '0000-00-00';
             $this->jamSebelumnya = $permintaanLab->jam_hasil;
+
+            $waktuRegistrasi = carbon_immutable($registrasi->pemeriksaan->max('waktu_pemeriksaan'));
 
             $this->tgl = $waktuRegistrasi->toDateString();
             $this->jam = $waktuRegistrasi->format('H:i:s');
@@ -179,6 +179,23 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                             $this->totalKSO              += $t->kso;
                             $this->totalManajemen        += $t->menejemen;
                             $this->totalPendapatan       += $t->total_byr;
+                        });
+
+                    TindakanLab::query()
+                        ->whereIn('kd_jenis_prw', $tindakanSudahAda)
+                        ->get()
+                        ->each(function (TindakanLab $t) {
+                            tracker_start('mysql_sik');
+                            HasilPeriksaLab::query()
+                                ->where('no_rawat', $this->noRawat)
+                                ->where('kd_jenis_prw', $t->kd_jenis_prw)
+                                ->where('tgl_periksa', $this->tglSebelumnya)
+                                ->where('jam', $this->jamSebelumnya)
+                                ->update([
+                                    'tgl_periksa' => $this->tgl,
+                                    'jam'         => $this->jam,
+                                ]);
+                            tracker_end('mysql_sik', $this->username);
                         });
 
                     PemeriksaanLab::query()
@@ -273,8 +290,8 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
     {
         if (! KesanSaran::query()
             ->where('no_rawat', $this->noRawat)
-            ->where('tgl_periksa', $this->tgl)
-            ->where('jam', $this->jam)
+            ->where('tgl_periksa', $this->tglSebelumnya)
+            ->where('jam', $this->jamSebelumnya)
             ->exists()
         ) {
             tracker_start('mysql_sik');
@@ -290,9 +307,13 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
             tracker_start('mysql_sik');
             KesanSaran::query()
                 ->where('no_rawat', $this->noRawat)
-                ->where('tgl_periksa', $this->tgl)
-                ->where('jam', $this->jam)
-                ->update(['kesan' => $registrasi->keterangan_hasil]);
+                ->where('tgl_periksa', $this->tglSebelumnya)
+                ->where('jam', $this->jamSebelumnya)
+                ->update([
+                    'tgl_periksa' => $this->tgl,
+                    'jam'         => $this->jam,
+                    'kesan'       => $registrasi->keterangan_hasil,
+                ]);
             tracker_end('mysql_sik', $this->username);
         }
     }
