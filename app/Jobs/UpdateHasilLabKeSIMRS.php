@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Exceptions\RegistrationClosedException;
 use App\Models\Pemeriksaan;
 use App\Models\Registrasi;
+use App\Models\SIMRS\HasilPeriksaLab;
 use App\Models\SIMRS\HasilPeriksaLabDetail;
 use App\Models\SIMRS\Jurnal;
 use App\Models\SIMRS\KesanSaran;
@@ -35,7 +36,11 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
 
     private string $tgl;
 
+    private string $tglSebelumnya;
+
     private string $jam;
+
+    private string $jamSebelumnya;
 
     private string $dokterPerujuk;
 
@@ -82,7 +87,7 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
      */
     public function handle()
     {
-	$this->cariUser();
+	    $this->cariUser();
         $this->simpanHasilLab();
     }
 
@@ -111,8 +116,14 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
 
             $this->noRawat = $permintaanLab->no_rawat;
             $this->statusRawat = $permintaanLab->status;
-            $this->tgl = $permintaanLab->tgl_hasil;
-            $this->jam = $permintaanLab->jam_hasil;
+
+            $this->tglSebelumnya = $permintaanLab->tgl_hasil;
+            $this->jamSebelumnya = $permintaanLab->jam_hasil;
+
+            $waktuRegistrasi = carbon_immutable($registrasi->pemeriksaan->max('waktu_pemeriksaan'));
+
+            $this->tgl = $waktuRegistrasi->toDateString();
+            $this->jam = $waktuRegistrasi->format('H:i:s');
 
             $this->cariUser();
 
@@ -140,12 +151,14 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
                             HasilPeriksaLabDetail::query()
                                 ->where('no_rawat', $this->noRawat)
                                 ->where('kd_jenis_prw', $p->kd_jenis_prw)
-                                ->where('tgl_periksa', $this->tgl)
-                                ->where('jam', $this->jam)
+                                ->where('tgl_periksa', $this->tglSebelumnya)
+                                ->where('jam', $this->jamSebelumnya)
                                 ->where('id_template', $p->id_template)
                                 ->update([
-                                    'nilai'      => $pemeriksaan->hasil_nilai_hasil,
-                                    'keterangan' => $pemeriksaan->hasil_flag_kode ?? '',
+                                    'tgl_periksa' => $this->tgl,
+                                    'jam'         => $this->jam,
+                                    'nilai'       => $pemeriksaan->hasil_nilai_hasil,
+                                    'keterangan'  => $pemeriksaan->hasil_flag_kode ?? '',
                                 ]);
                             tracker_end('mysql_sik', $this->username);
                         } else {
