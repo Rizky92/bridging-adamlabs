@@ -115,7 +115,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
             $this->noRawat = $permintaanLab->no_rawat;
             $this->statusRawat = $permintaanLab->status;
 
-            $this->tglSebelumnya = optional($permintaanLab->tgl_hasil) ?? '0000-00-00';
+            $this->tglSebelumnya = $permintaanLab->tgl_hasil ?? '0000-00-00';
             $this->jamSebelumnya = $permintaanLab->jam_hasil;
 
             $waktuRegistrasi = carbon_immutable($registrasi->pemeriksaan->max('waktu_pemeriksaan'));
