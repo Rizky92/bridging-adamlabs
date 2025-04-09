@@ -44,11 +44,7 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param  array{
-     *     no_laboratorium: string,
-     *     no_registrasi: string
-     *     username: string
-     * }  $options
+     * @param  array{no_laboratorium: string, no_registrasi: string, username: string}  $options
      */
     public function __construct(array $options)
     {

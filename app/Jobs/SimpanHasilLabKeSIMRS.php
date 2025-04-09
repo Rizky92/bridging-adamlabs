@@ -67,11 +67,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param  array{
-     *     no_laboratorium: string,
-     *     no_registrasi: string
-     *     user: string
-     * }  $params
+     * @param  array{no_laboratorium: string, no_registrasi: string, username: string}  $options
      */
     public function __construct(array $params)
     {
