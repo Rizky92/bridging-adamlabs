@@ -13,6 +13,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/bridging-adamlabs', function () {
-    return view('welcome');
-});
+Route::get('/', fn () => 'It works!');
