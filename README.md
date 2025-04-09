@@ -49,5 +49,5 @@ Route ini digunakan untuk mengupdate hasil pemeriksaan lab yang sebelumnya sudah
 Setiap pengembalian hasil akan melakukan proses perhitungan keuangan yang kemudian akan dicatat sebagai transaksi jurnal di SIMRS. Apabila penggunaan keuangan telah terintegrasi ke SIMRS, maka **SANGAT DISARANKAN** untuk melakukan uji coba dahulu.  
 
 ### TODO:
-- [ ] Mengupdate waktu hasil agar menggunakan waktu terbaru dari hasil pengembalian LIS.
+- [x] [Mengupdate waktu hasil agar menggunakan waktu terbaru dari hasil pengembalian LIS.](https://github.com/Rizky92/bridging-adamlabs/pull/2)
 - [ ] Update validasi
