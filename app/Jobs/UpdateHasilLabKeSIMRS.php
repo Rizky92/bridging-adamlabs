@@ -2,12 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Exceptions\RegistrationClosedException;
-use App\Models\Pemeriksaan;
 use App\Models\Registrasi;
-use App\Models\SIMRS\HasilPeriksaLab;
 use App\Models\SIMRS\HasilPeriksaLabDetail;
-use App\Models\SIMRS\Jurnal;
 use App\Models\SIMRS\KesanSaran;
 use App\Models\SIMRS\PemeriksaanLab;
 use App\Models\SIMRS\PermintaanLabPK;
@@ -17,7 +13,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
-use Throwable;
 
 class UpdateHasilLabKeSIMRS implements ShouldQueue
 {
@@ -36,11 +31,7 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
 
     private string $tgl;
 
-    private string $tglSebelumnya;
-
     private string $jam;
-
-    private string $jamSebelumnya;
 
     private string $dokterPerujuk;
 
@@ -49,22 +40,6 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
     private string $username;
 
     private string $nip;
-
-    private float $totalJasaMedisDokter = 0;
-
-    private float $totalJasaMedisPetugas = 0;
-
-    private float $totalKSO = 0;
-
-    private float $totalPendapatan = 0;
-
-    private float $totalBHP = 0;
-
-    private float $totalJasaSarana = 0;
-
-    private float $totalJasaPerujuk = 0;
-
-    private float $totalManajemen = 0;
 
     /**
      * Create a new job instance.
