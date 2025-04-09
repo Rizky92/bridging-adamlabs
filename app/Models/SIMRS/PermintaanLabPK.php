@@ -22,6 +22,11 @@ class PermintaanLabPK extends Model
 
     public $timestamps = false;
 
+    protected $fillable = [
+        'tgl_hasil',
+        'jam_hasil',
+    ];
+
     public function hasil(): CompositeHasMany
     {
         return $this
