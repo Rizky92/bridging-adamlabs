@@ -3,9 +3,9 @@
 namespace App\Jobs;
 
 use App\Models\Registrasi;
-use App\Models\SIMRS\HasilPeriksaLabDetail;
 use App\Models\SIMRS\KesanSaran;
 use App\Models\SIMRS\PemeriksaanLab;
+use App\Models\SIMRS\PeriksaLabDetail;
 use App\Models\SIMRS\PermintaanLabPK;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -27,15 +27,9 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
 
     private string $noRawat;
 
-    private string $statusRawat;
-
     private string $tgl;
 
     private string $jam;
-
-    private string $dokterPerujuk;
-
-    private string $dokterPj;
 
     private string $username;
 
@@ -79,14 +73,12 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
             ->firstOrFail();
 
         $registrasi = Registrasi::query()
-            ->with('pemeriksaan')
+            ->with('pemeriksaan', fn ($q) => $q->where('status_bridging', 1))
             ->where('no_laboratorium', $this->noLaboratorium)
             ->where('no_registrasi', $this->noRegistrasi)
             ->firstOrFail();
 
         $this->noRawat = $permintaanLab->no_rawat;
-        $this->statusRawat = $permintaanLab->status;
-
         $this->tgl = $permintaanLab->tgl_hasil;
         $this->jam = $permintaanLab->jam_hasil;
 
@@ -105,19 +97,18 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
                         ->whereStrict('kategori_pemeriksaan_nama', $p->kategori)
                         ->whereStrict('kode_tindakan_simrs', $p->kd_jenis_prw)
                         ->whereStrict('compound', $p->kode_compound)
-                        ->whereStrict('status_bridging', true)
                         ->first();
 
                     tracker_start('mysql_sik');
-                    HasilPeriksaLabDetail::query()
+                    PeriksaLabDetail::query()
                         ->where('no_rawat', $this->noRawat)
                         ->where('kd_jenis_prw', $p->kd_jenis_prw)
                         ->where('tgl_periksa', $this->tgl)
                         ->where('jam', $this->jam)
                         ->where('id_template', $p->id_template)
                         ->update([
-                            'nilai'       => $pemeriksaan->hasil_nilai_hasil,
-                            'keterangan'  => $pemeriksaan->hasil_flag_kode ?? '',
+                            'nilai'      => $pemeriksaan->hasil_nilai_hasil,
+                            'keterangan' => $pemeriksaan->hasil_flag_kode ?? '',
                         ]);
                     tracker_end('mysql_sik', $this->username);
                 });

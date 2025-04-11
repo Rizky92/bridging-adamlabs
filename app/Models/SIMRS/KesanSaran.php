@@ -33,7 +33,7 @@ class KesanSaran extends Model
     public function pemeriksaan(): CompositeBelongsTo
     {
         return $this->compositeBelongsTo(
-            HasilPeriksaLab::class,
+            PeriksaLab::class,
             ['no_rawat', 'tgl_periksa', 'jam'],
             ['no_rawat', 'tgl_periksa', 'jam'],
         );

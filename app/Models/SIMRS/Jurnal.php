@@ -3,10 +3,9 @@
 namespace App\Models\SIMRS;
 
 use App\Exceptions\InequalJournalException;
-use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use RuntimeException;
 
@@ -54,7 +53,7 @@ class Jurnal extends Model
         $index = 1;
 
         $noJurnalTerakhir = static::query()
-            ->whereRaw('no_jurnal like ?', [str($date)->wrap('JR', '%')->value()])
+            ->where('no_jurnal', 'like', [str($date)->wrap('JR', '%')->value()])
             ->orderBy('no_jurnal', 'desc')
             ->value('no_jurnal');
 

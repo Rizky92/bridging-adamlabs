@@ -5,8 +5,8 @@ namespace App\Jobs;
 use App\Exceptions\RegistrationClosedException;
 use App\Models\Pemeriksaan;
 use App\Models\Registrasi;
-use App\Models\SIMRS\HasilPeriksaLab;
-use App\Models\SIMRS\HasilPeriksaLabDetail;
+use App\Models\SIMRS\PeriksaLab;
+use App\Models\SIMRS\PeriksaLabDetail;
 use App\Models\SIMRS\Jurnal;
 use App\Models\SIMRS\KesanSaran;
 use App\Models\SIMRS\PemeriksaanLab;
@@ -146,7 +146,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                         ->get()
                         ->each(function (TindakanLab $t) use ($registrasi) {
                             tracker_start('mysql_sik');
-                            HasilPeriksaLab::create([
+                            PeriksaLab::create([
                                 'no_rawat'               => $this->noRawat,
                                 'nip'                    => $this->nip,
                                 'kd_jenis_prw'           => $t->kd_jenis_prw,
@@ -182,7 +182,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                         ->get()
                         ->each(function (TindakanLab $t) {
                             tracker_start('mysql_sik');
-                            HasilPeriksaLab::query()
+                            PeriksaLab::query()
                                 ->where('no_rawat', $this->noRawat)
                                 ->where('kd_jenis_prw', $t->kd_jenis_prw)
                                 ->where('tgl_periksa', $this->tglSebelumnya)
@@ -206,7 +206,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
 
                             if ($pemeriksaan->status_bridging) {
                                 tracker_start('mysql_sik');
-                                HasilPeriksaLabDetail::query()
+                                PeriksaLabDetail::query()
                                     ->where('no_rawat', $this->noRawat)
                                     ->where('kd_jenis_prw', $p->kd_jenis_prw)
                                     ->where('tgl_periksa', $this->tglSebelumnya)
@@ -221,7 +221,7 @@ class SimpanHasilLabKeSIMRS implements ShouldQueue
                                 tracker_end('mysql_sik', $this->username);
                             } else {
                                 tracker_start('mysql_sik');
-                                HasilPeriksaLabDetail::create([
+                                PeriksaLabDetail::create([
                                     'no_rawat'       => $this->noRawat,
                                     'kd_jenis_prw'   => $p->kd_jenis_prw,
                                     'tgl_periksa'    => $this->tgl,
