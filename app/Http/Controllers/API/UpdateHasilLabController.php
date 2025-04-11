@@ -16,6 +16,7 @@ class UpdateHasilLabController
         try {
             \Illuminate\Support\Facades\Log::info('request for update masuk', ['request' => $request]);
         } catch (\Exception $e) {}
+        
         $data = $request->validated();
 
         tracker_start('mysql');

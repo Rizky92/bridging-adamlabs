@@ -33,8 +33,6 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
 
     private string $username;
 
-    private string $nip;
-
     /**
      * Create a new job instance.
      *
@@ -52,18 +50,7 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
      */
     public function handle()
     {
-	    $this->cariUser();
         $this->simpanHasilLab();
-    }
-
-    private function cariUser(): void
-    {
-        if (empty($this->nip)) {
-            $this->nip = DB::connection('mysql_sik')->table('mapping_user_bridginglab')
-                ->where('vendor', 'adamlabs')
-                ->where('username', $this->username)
-                ->value('nip');
-        }
     }
 
     private function simpanHasilLab(): void
@@ -81,8 +68,6 @@ class UpdateHasilLabKeSIMRS implements ShouldQueue
         $this->noRawat = $permintaanLab->no_rawat;
         $this->tgl = $permintaanLab->tgl_hasil;
         $this->jam = $permintaanLab->jam_hasil;
-
-        $this->cariUser();
 
         $kategori = $registrasi->pemeriksaan->pluck('kategori_pemeriksaan_nama')->filter()->unique()->values();
         $tindakan = $registrasi->pemeriksaan->pluck('kode_tindakan_simrs')->filter()->unique()->values();
